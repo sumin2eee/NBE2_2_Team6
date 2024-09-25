@@ -27,15 +27,17 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Admin as 관리자
-    participant WebApp as WEB
-    participant DB as DB
+    participant WebApp as 웹
+    participant DB as DB?API?
 
     Admin ->> WebApp: 영화 정보 입력 (영화명, 가격, 상세정보)
     WebApp ->> WebApp: 입력된 정보 유효성 검증
-    WebApp ->> DB: 영화 정보 요청
-    DB ->> WebApp: 영화 목록 반환
-    DB -->> WebApp: 영화 정보 저장 완료 메시지 반환
-    WebApp ->> Admin: 영화 등록 성공 메시지 반환
+    alt 유효성 검증 성공
+        WebApp ->> DB: 영화 정보 저장 요청
+        DB -->> WebApp: 영화 저장 완료
+        WebApp ->> Admin: 영화 등록 성공 메시지 반환
+    else 유효성 검증 실패
+        WebApp ->> Admin: 유효성 검증 실패 메시지 반환
 ```
 
 ## 영화 선택
