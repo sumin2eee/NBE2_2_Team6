@@ -1,7 +1,7 @@
 # NBE2_2_Team6
 가상의 극장을 가지고 운영하는 영화관 서비스입니다.
 
-
+```mermaid
 sequenceDiagram
     participant User as 사용자
     participant WebApp as WEB
