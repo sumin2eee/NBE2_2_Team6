@@ -28,7 +28,7 @@ sequenceDiagram
 sequenceDiagram
     participant Admin as 관리자
     participant WebApp as 웹
-    participant DB as DB
+    participant DB as DB or API(나중에 같이 정해요~)
 
     Admin ->> WebApp: 영화 정보 입력 (영화명, 가격, 상세정보)
     WebApp ->> WebApp: 입력된 정보 유효성 검증
