@@ -1,5 +1,7 @@
 # NBE2_2_Team6
-가상의 극장을 가지고 운영하는 영화관 서비스입니다.
+가상의 극장을 운영하는 영화관 서비스입니다.
+
+## 로그인 시나리오
 
 ```mermaid
 sequenceDiagram
@@ -19,8 +21,7 @@ sequenceDiagram
     Session -->> WebApp: 세션 만료
     WebApp ->> User: 자동 로그아웃
 
-```markdown
-```mermaid
+
 sequenceDiagram
     participant Admin as 관리자
     participant WebApp as WEB
@@ -30,7 +31,8 @@ sequenceDiagram
     WebApp ->> WebApp: 입력된 정보 유효성 검증
     WebApp ->> DB: 영화 정보 요청
     DB ->> WebApp: 영화 목록 반환
-    WebApp ->> Admin: 상품 등록 성공 메시지 반환
+    WebApp ->> Admin: 영화 등록 성공 메시지 반환
+
 
 
 
