@@ -19,6 +19,7 @@ sequenceDiagram
     Session -->> WebApp: 세션 만료
     WebApp ->> User: 자동 로그아웃
 
+```markdown
 ```mermaid
 sequenceDiagram
     participant Admin as 관리자
