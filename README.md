@@ -28,7 +28,7 @@ sequenceDiagram
 sequenceDiagram
     participant Admin as 관리자
     participant WebApp as 웹
-    participant DB as DB?API?
+    participant DB as DB
 
     Admin ->> WebApp: 영화 정보 입력 (영화명, 가격, 상세정보)
     WebApp ->> WebApp: 입력된 정보 유효성 검증
@@ -38,6 +38,7 @@ sequenceDiagram
         WebApp ->> Admin: 영화 등록 성공 메시지 반환
     else 유효성 검증 실패
         WebApp ->> Admin: 유효성 검증 실패 메시지 반환
+    end
 ```
 
 ## 영화 선택
