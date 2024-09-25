@@ -8,17 +8,17 @@ sequenceDiagram
     participant User as 사용자
     participant WebApp as WEB
     participant DB as DB
-    participant Session as 세션
+    participant JWT as JWT
     
     User ->> WebApp: 아이디, 비밀번호 입력
     WebApp ->> DB: 아이디 및 비밀번호 검증
     DB ->> WebApp: 검증 성공
-    WebApp ->> Session: 세션 생성
+    WebApp ->> JWT: JWT 생성
     WebApp ->> User: 로그인 성공 메시지
     
-    Note over WebApp, User: 세션 만료 시간 이후
+    Note over WebApp, User: 토큰 만료 시간 이후
     
-    Session -->> WebApp: 세션 만료
+    JWT -->> WebApp: JWT 만료
     WebApp ->> User: 자동 로그아웃
 ``` 
 
