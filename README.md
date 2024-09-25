@@ -31,7 +31,7 @@ sequenceDiagram
     participant DB as DB or API(나중에 같이 정해요~)
 
     Admin ->> WebApp: 영화 정보 입력 (영화명, 가격, 상세정보)
-    WebApp ->> WebApp: 입력된 정보 유효성 검증
+    WebApp ->> WebApp: 입력된 정보 유효성 검증(넣은 의도는 3개 중 빈 곳이 있으면 출력 안되는 느낌입니다)
     alt 유효성 검증 성공
         WebApp ->> DB: 영화 정보 저장 요청
         DB -->> WebApp: 영화 저장 완료
@@ -96,3 +96,26 @@ sequenceDiagram
         WebApp ->> User: 결제 실패 메시지
     end
 ```
+## 리뷰
+```mermaid
+sequenceDiagram
+    participant User as 사용자
+    participant WebApp as 웹
+    participant DB as DB
+
+    User ->> WebApp: 아이디 및 리뷰 요청 전달
+    WebApp ->> DB: 예약 정보 확인 요청
+    alt 예약 정보 없음
+        DB -->> WebApp: 리뷰 요청 실패
+        WebApp ->> User: 리뷰 요청 불가능 메시지 전달
+    else 예약 정보 있음
+        DB -->> WebApp: 리뷰 요청 성공
+        WebApp ->> User: 리뷰 요청 가능 메시지 전달
+        
+        User ->> WebApp: 리뷰 내용 전달
+        WebApp ->> DB: 리뷰 내용 저장 요청
+        DB -->> WebApp: 리뷰 등록 성공 알림
+        WebApp ->> User: 리뷰 등록 완료 메시지 전달
+    end
+```
+
