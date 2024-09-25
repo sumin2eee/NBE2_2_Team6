@@ -20,8 +20,11 @@ sequenceDiagram
     
     Session -->> WebApp: 세션 만료
     WebApp ->> User: 자동 로그아웃
+```  <!-- 다이어그램 끝 -->
 
+## 영화 정보 등록 시나리오
 
+```mermaid
 sequenceDiagram
     participant Admin as 관리자
     participant WebApp as WEB
@@ -32,3 +35,4 @@ sequenceDiagram
     WebApp ->> DB: 영화 정보 요청
     DB ->> WebApp: 영화 목록 반환
     WebApp ->> Admin: 영화 등록 성공 메시지 반환
+```  <!-- 다이어그램 끝 -->
