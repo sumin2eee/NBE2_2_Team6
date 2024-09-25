@@ -104,11 +104,11 @@ sequenceDiagram
     participant DB as DB
 
     User ->> WebApp: 아이디 및 리뷰 요청 전달
-    WebApp ->> DB: 예약 정보 확인 요청
-    alt 예약 정보 없음
+    WebApp ->> DB: 예매 정보 확인 요청
+    alt 예매 정보 없음
         DB -->> WebApp: 리뷰 요청 실패
         WebApp ->> User: 리뷰 요청 불가능 메시지 전달
-    else 예약 정보 있음
+    else 예매 정보 있음
         DB -->> WebApp: 리뷰 요청 성공
         WebApp ->> User: 리뷰 요청 가능 메시지 전달
         
