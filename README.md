@@ -22,7 +22,7 @@ sequenceDiagram
     WebApp ->> User: 자동 로그아웃
 ``` 
 
-## 영화 정보 등록 시나리오
+## 영화 정보 등록 
 
 ```mermaid
 sequenceDiagram
