@@ -10,6 +10,7 @@ import java.util.List;
 public class MovieResponseDTO {
     private BoxOfficeResult boxOfficeResult;
 
+
     @Data
     public static class BoxOfficeResult {
         private String boxOfficeType;

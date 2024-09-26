@@ -47,4 +47,5 @@ public Mono<List<Movie>> getDailyBoxOffice() {
             }).collectList();
 }
 //여기까지는 하면 entity에 저장
+
 }
