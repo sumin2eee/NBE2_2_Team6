@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "movie")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
