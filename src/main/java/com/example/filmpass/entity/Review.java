@@ -36,5 +36,4 @@ public class Review {
 
     @LastModifiedDate
     private LocalDateTime modDate;
-
 }
