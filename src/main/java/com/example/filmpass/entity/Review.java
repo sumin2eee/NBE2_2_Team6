@@ -37,11 +37,4 @@ public class Review {
     @LastModifiedDate
     private LocalDateTime modDate;
 
-    public void changeContent(String content) {
-        this.content = content;
-    }
-
-    public void changeRating(int rating) {
-        this.rating = rating;
-    }
 }
