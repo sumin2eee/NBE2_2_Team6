@@ -24,25 +24,23 @@ public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movieId;
 
-    private String title;
+    private String movieCd;
 
-    private LocalDateTime startDate;
+    private String movieName;
 
-    private LocalDateTime endDate;
+    private String movieNameEN;
 
-    private String posterUrl;
+    private String director_name;
 
-    private int ageRating;
+    private AgeRatingEnum ageRating;    //관람등급
 
-    private String description;
+    private double movieRating;
 
-    private int price;
+    private String showTm; //러닝타임
 
-    private String nationNm;
+    private String openDt;  //개봉년도
 
-    @CreatedDate
-    private LocalDateTime regDate;
+    private String plot; //줄거리
 
-    @LastModifiedDate
-    private LocalDateTime modDate;
+    private String poster;
 }
