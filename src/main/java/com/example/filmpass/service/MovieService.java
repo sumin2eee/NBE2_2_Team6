@@ -1,23 +1,30 @@
 package com.example.filmpass.service;
 
 import com.example.filmpass.dto.DailyBoxOfficeDto;
+import com.example.filmpass.dto.MovieInfoResponse;
 import com.example.filmpass.dto.MovieResponseDTO;
+import com.example.filmpass.entity.Movie;
+import com.example.filmpass.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Log4j2
 public class MovieService {
     private final WebClient webClient;
+    private final MovieRepository movieRepository;
 
-    public Mono<List<DailyBoxOfficeDto>> getDailyBoxOffice(String apiKey, String targetDate) {
-        return webClient.get()
+    //일일박스오피스 API에서 1위부터 10위까지의 영화 불러오는 코드
+    public List<DailyBoxOfficeDto> getDailyBoxOffice(String apiKey, String targetDate) {
+        List<DailyBoxOfficeDto> dailyBoxOfficeDtos = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/boxoffice/searchDailyBoxOfficeList.json") // API 경로
                         .queryParam("key", apiKey) // API 키를 쿼리 파라미터로 추가
@@ -26,9 +33,31 @@ public class MovieService {
                 .retrieve()
                 .bodyToMono(MovieResponseDTO.class)
                 .map(MovieResponseDTO::getBoxOfficeResult)
-                .map(MovieResponseDTO.BoxOfficeResult::getDailyBoxOfficeList);
+                .map(MovieResponseDTO.BoxOfficeResult::getDailyBoxOfficeList)
+                .block();
 
-    }
+        //1순위부터 10순위에 있는 영화 movieCd가져와서 상세 정보 API 불러오는 코드
+            for (DailyBoxOfficeDto dailyBoxOfficeDto : dailyBoxOfficeDtos) {
+                MovieInfoResponse movieDTO = webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                        .path("/movie/searchMovieInfo.json")
+                        .queryParam("key",apiKey)
+                        .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd()) //dailyBoxOfficeDto.getMovieCd()
+                        .build())
+                        .retrieve()
+                        .bodyToMono(MovieInfoResponse.class)
+                        .block();
+            log.info(movieDTO);
+
+            }
+            return dailyBoxOfficeDtos;
+       }
 
 
+
+
+//    public MovieDTO getMovieInfo(Long movieCd) {
+//        Movie movie = movieRepository.findById(movieCd).orElse(MovieException.MOVIE_NOT_FOUND::get);
+//        return
+//    }
 }
