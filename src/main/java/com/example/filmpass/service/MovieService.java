@@ -42,7 +42,7 @@ public class MovieService {
                         .uri(uriBuilder -> uriBuilder
                         .path("/movie/searchMovieInfo.json")
                         .queryParam("key",apiKey)
-                        .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd()) //dailyBoxOfficeDto.getMovieCd()
+                        .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd())
                         .build())
                         .retrieve()
                         .bodyToMono(MovieInfoResponse.class)
@@ -54,10 +54,4 @@ public class MovieService {
        }
 
 
-
-
-//    public MovieDTO getMovieInfo(Long movieCd) {
-//        Movie movie = movieRepository.findById(movieCd).orElse(MovieException.MOVIE_NOT_FOUND::get);
-//        return
-//    }
 }

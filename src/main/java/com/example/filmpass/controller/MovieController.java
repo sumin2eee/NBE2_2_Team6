@@ -8,6 +8,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -21,8 +23,11 @@ public class MovieController {
     //영화 목록 - 영화의 1순위부터 10순위까지 보여주는 코드
     @GetMapping("/dailyBoxOffice")
     public List<DailyBoxOfficeDto> getDailyBoxOffice() {
-        // 오늘 날짜를 yyyyMMdd 형식으로 포맷팅
-        String targetDate = "20120101";
+        // 어제 날짜를 yyyyMMdd 형식으로 포맷팅
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime yesterday = today.minusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String targetDate = yesterday.format(formatter);
         // MovieService를 호출하여 일일 박스오피스 정보를 가져옵니다.
         return movieService.getDailyBoxOffice(apiKey, targetDate);
     }
