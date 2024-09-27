@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "movie")
@@ -16,31 +18,29 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Movie {
+public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교해서 수정하기
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movieId;
 
-    private String title;
+    private String movieCd;
 
-    private LocalDateTime startDate;
+    private String movieName;
 
-    private LocalDateTime endDate;
+    private String movieNameEN;
 
-    private String posterUrl;
+    private String director_name;
 
-    private int ageRating;
+    private AgeRatingEnum ageRating;    //관람등급
 
-    private String description;
+    private double movieRating;
 
-    private int price;
+    private String showTm; //러닝타임
 
-    private String nationNm;
+    private String openDt;  //개봉년도
 
-    @CreatedDate
-    private LocalDateTime regDate;
+    private String plot; //줄거리
 
-    @LastModifiedDate
-    private LocalDateTime modDate;
+    private String poster;
 }
