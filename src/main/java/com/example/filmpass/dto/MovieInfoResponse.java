@@ -85,5 +85,13 @@ public class MovieInfoResponse {
         private String peopleNmEn;
         private String staffRoleNm;
     }
-
+    public Movie toEntity() {
+        return Movie.builder()
+                .movieCd(movieInfoResult.getMovieInfo().movieCd)
+                .movieName(movieInfoResult.getMovieInfo().movieNm)
+                .showTm(movieInfoResult.getMovieInfo().showTm)
+                .movieNameEN(movieInfoResult.getMovieInfo().movieNmEn)
+                .openDt(movieInfoResult.getMovieInfo().openDt)
+                .build();
+    }
 }

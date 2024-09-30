@@ -1,11 +1,13 @@
 package com.example.filmpass.controller;
 
 import com.example.filmpass.dto.DailyBoxOfficeDto;
+import com.example.filmpass.entity.Movie;
 import com.example.filmpass.repository.MovieRepository;
 import com.example.filmpass.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -32,8 +34,10 @@ public class MovieController {
         return movieService.getDailyBoxOffice(apiKey, targetDate);
     }
 
-
-
+    @GetMapping("/dailyBoxOffice/{movieCd}")
+    public Movie getMovieInfo(@PathVariable("movieCd") String movieCd) {
+        return movieService.getMovieInfo(movieCd);
+    }
 
 
 //@GetMapping("/dailyBoxOffice/{movieCd}")

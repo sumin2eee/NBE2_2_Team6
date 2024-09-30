@@ -40,18 +40,28 @@ public class MovieService {
             for (DailyBoxOfficeDto dailyBoxOfficeDto : dailyBoxOfficeDtos) {
                 MovieInfoResponse movieDTO = webClient.get()
                         .uri(uriBuilder -> uriBuilder
-                        .path("/movie/searchMovieInfo.json")
-                        .queryParam("key",apiKey)
-                        .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd())
-                        .build())
+                                .path("/movie/searchMovieInfo.json")
+                                .queryParam("key", apiKey)
+                                .queryParam("movieCd", dailyBoxOfficeDto.getMovieCd())
+                                .build())
                         .retrieve()
                         .bodyToMono(MovieInfoResponse.class)
                         .block();
-            log.info(movieDTO);
+                log.info(movieDTO);
+                Movie movie = movieDTO.toEntity();
 
+                if (movieRepository.existsByMovieCd(movie.getMovieCd())) {
+                    log.warn("Movie with movieCd {} already exists in DB", movie.getMovieCd());
+                    continue;
+                }
+                movieRepository.save(movie);
             }
             return dailyBoxOfficeDtos;
        }
 
 
+    public Movie getMovieInfo(String movieCd) {
+         Movie movie = movieRepository.findByMovieCd(movieCd);
+         return movie;
+    }
 }

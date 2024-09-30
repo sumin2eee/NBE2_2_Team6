@@ -30,7 +30,7 @@ public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교
 
     private String movieNameEN;
 
-    private String director_name;
+    private String directorName;
 
     private AgeRatingEnum ageRating;    //관람등급
 
