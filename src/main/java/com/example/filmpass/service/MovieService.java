@@ -37,21 +37,27 @@ public class MovieService {
                 .block();
 
         //1순위부터 10순위에 있는 영화 movieCd가져와서 상세 정보 API 불러오는 코드
-            for (DailyBoxOfficeDto dailyBoxOfficeDto : dailyBoxOfficeDtos) {
-                MovieInfoResponse movieDTO = webClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                        .path("/movie/searchMovieInfo.json")
-                        .queryParam("key",apiKey)
-                        .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd())
-                        .build())
-                        .retrieve()
-                        .bodyToMono(MovieInfoResponse.class)
-                        .block();
+        for (DailyBoxOfficeDto dailyBoxOfficeDto : dailyBoxOfficeDtos) {
+            MovieInfoResponse movieDTO = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/movie/searchMovieInfo.json")
+                            .queryParam("key",apiKey)
+                            .queryParam("movieCd",dailyBoxOfficeDto.getMovieCd())
+                            .build())
+                    .retrieve()
+                    .bodyToMono(MovieInfoResponse.class)
+                    .block();
             log.info(movieDTO);
+            Movie movie = movieDTO.toEntity();
 
+            if (movieRepository.existsByMovieCd(movie.getMovieCd())) {
+                log.warn("Movie with movieCd {} already exists", movie.getMovieCd());
+                continue;
             }
-            return dailyBoxOfficeDtos;
-       }
+            movieRepository.save(movie);
+        }
+        return dailyBoxOfficeDtos;
+    }
 
 
 }
