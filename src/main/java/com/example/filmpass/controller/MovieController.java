@@ -31,7 +31,6 @@ public class MovieController {
         // MovieService를 호출하여 일일 박스오피스 정보를 가져옵니다.
         return movieService.getDailyBoxOffice(apiKey, targetDate);
     }
-}
 
 
 //@GetMapping("/dailyBoxOffice/{movieCd}")
@@ -51,3 +50,4 @@ public class MovieController {
 ////여기까지는 하면 entity에 저장 -- 이걸 서비스나 레포지토리로 옮겨야 할 것 같아요 순위 가져오는 동시에 상세 정보가 DB에 저장 되도록
 
 
+}

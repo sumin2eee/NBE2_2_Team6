@@ -25,12 +25,6 @@ public class MovieInfoResponse {
         private String prdtStatNm;
         private String typeNm;
 
-        // 추가 필드
-        private String plot;            // 줄거리
-        private String poster;          // 포스터 이미지 URL
-        private double movieRating;     // 영화 평점
-        private String ageRating;       // 관람 등급
-
         private List<Nation> nations;
         private List<Genre> genres;
         private List<Director> directors;
@@ -90,15 +84,6 @@ public class MovieInfoResponse {
         private String peopleNm;
         private String peopleNmEn;
         private String staffRoleNm;
-    }
-    public Movie toEntity() {
-        return Movie.builder()
-                .movieCd(movieInfoResult.getMovieInfo().movieCd)
-                .movieName(movieInfoResult.getMovieInfo().movieNm)
-                .showTm(movieInfoResult.getMovieInfo().getShowTm())
-                .movieNameEN(movieInfoResult.getMovieInfo().getMovieNmEn())
-                        .openDt(movieInfoResult.getMovieInfo().openDt)
-                        .build();
     }
 
 }
