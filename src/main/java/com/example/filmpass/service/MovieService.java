@@ -78,26 +78,23 @@ public class MovieService {
     public void updateMoviesWithPosterAndPlot(List<String> movieTitles) {
         String kmdbApiKey = "P2428ABO640DWR015TI4"; // KMDB API 키
 
-        for (String originalTitle : movieTitles) {
+        for (String movieTitle : movieTitles) {
             try {
-                // 특수 문자를 제거한 제목으로 API 요청을 보냄
-                String sanitizedTitle = removeSpecialCharacters(originalTitle);
-
                 // KMDB API URL 빌드
                 StringBuilder urlBuilder = new StringBuilder("http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp");
                 urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=" + kmdbApiKey);
                 urlBuilder.append("&" + URLEncoder.encode("collection", "UTF-8") + "=kmdb_new2");
-                urlBuilder.append("&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(sanitizedTitle, "UTF-8"));
+                urlBuilder.append("&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(movieTitle, "UTF-8"));
                 urlBuilder.append("&" + URLEncoder.encode("detail", "UTF-8") + "=Y");
                 urlBuilder.append("&" + URLEncoder.encode("format", "UTF-8") + "=json");
 
-
+                // URL 객체 생성 및 연결 설정
                 URL url = new URL(urlBuilder.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Content-type", "application/json");
 
-
+                // 응답 코드 확인 및 데이터 읽기
                 BufferedReader rd;
                 if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                     rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -105,7 +102,7 @@ public class MovieService {
                     rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
                 }
 
-
+                // 응답 데이터 읽기
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = rd.readLine()) != null) {
@@ -115,49 +112,56 @@ public class MovieService {
                 conn.disconnect();
 
                 String movieDetails = sb.toString();
-                log.info("KMDB API Response for movie '{}': {}", originalTitle, movieDetails);
+                log.info("KMDB API Response for movie '{}': {}", movieTitle, movieDetails);
 
-
+                // JSON 파싱 후 DB에 저장하는 로직 추가
                 MovieInfoResponse.MovieInfoResponseKMDB movieInfo = parseMovieDetails(movieDetails);
 
                 if (movieInfo != null) {
-
-                    Optional<Movie> optionalMovie = movieRepository.findByMovieName(originalTitle);
+                    Optional<Movie> optionalMovie = movieRepository.findByMovieName(movieTitle);
 
                     if (optionalMovie.isPresent()) {
                         Movie movie = optionalMovie.get();
                         movie.setPoster(movieInfo.getPoster());
                         movie.setPlot(movieInfo.getPlot());
-                        movieRepository.save(movie);
-                        log.info("Updated movie with poster and plot: " + originalTitle);
+                        movieRepository.save(movie); // 업데이트
+                        log.info("Updated movie with poster and plot: " + movieTitle);
                     } else {
-                        log.warn("Movie not found in DB: " + originalTitle);
+                        log.warn("Movie not found in DB: " + movieTitle);
                     }
                 } else {
-                    log.warn("No movie details found in KMDB for: " + originalTitle);
+                    log.warn("No movie details found in KMDB for: " + movieTitle);
                 }
             } catch (Exception e) {
-                log.error("Error while updating movie with poster and plot for: " + originalTitle, e);
+                log.error("Error while updating movie with poster and plot for: " + movieTitle, e);
             }
         }
     }
 
 
-    // 특수 문자를 제거하는 메서드
-    private String removeSpecialCharacters(String input) {
-        return input.replaceAll("[^a-zA-Z0-9가-힣 ]", "");  // 특수 문자를 제거하고 공백은 유지
-    }
-
-    // JSON 파싱 메서드 (필요한 필드만 파싱)
+    // JSON 파싱 메서드 (KMDB 응답에서 포스터와 줄거리만 추출)
     private MovieInfoResponse.MovieInfoResponseKMDB parseMovieDetails(String movieDetails) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(movieDetails, MovieInfoResponse.MovieInfoResponseKMDB.class);
-        } catch (Exception e) {
+            JsonNode root = objectMapper.readTree(movieDetails);
+
+            // 포스터와 줄거리 추출
+            JsonNode resultNode = root.path("Data").get(0).path("Result").get(0);
+            String poster = resultNode.path("posters").asText();
+            String plot = resultNode.path("plots").path("plot").get(0).path("plotText").asText();
+
+            MovieInfoResponse.MovieInfoResponseKMDB movieInfo = new MovieInfoResponse.MovieInfoResponseKMDB();
+            movieInfo.setPoster(poster);
+            movieInfo.setPlot(plot);
+
+            return movieInfo;
+        } catch (JsonProcessingException e) {
             log.error("Error while parsing movie details JSON", e);
             return null;
         }
     }
+
+
 }
 
 
