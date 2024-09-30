@@ -147,11 +147,14 @@ public class MovieService {
 
             // 포스터와 줄거리 추출
             JsonNode resultNode = root.path("Data").get(0).path("Result").get(0);
-            String poster = resultNode.path("posters").asText();
+            String posters = resultNode.path("posters").asText();  // 포스터 리스트 (여러 개일 수 있음)
             String plot = resultNode.path("plots").path("plot").get(0).path("plotText").asText();
 
+            // '|'로 분리하여 첫 번째 포스터만 가져옴
+            String firstPoster = posters.split("\\|")[0];
+
             MovieInfoResponse.MovieInfoResponseKMDB movieInfo = new MovieInfoResponse.MovieInfoResponseKMDB();
-            movieInfo.setPoster(poster);
+            movieInfo.setPoster(firstPoster);
             movieInfo.setPlot(plot);
 
             return movieInfo;
@@ -160,6 +163,7 @@ public class MovieService {
             return null;
         }
     }
+
 
 
 }
