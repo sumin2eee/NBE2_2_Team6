@@ -1,12 +1,13 @@
 package com.example.filmpass.dto;
 import com.example.filmpass.entity.Movie;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import java.util.List;
 
 @Data
 public class MovieInfoResponse {
     private MovieInfoResult movieInfoResult;
+    private MovieInfoResponseKMDB kmdbInfo;
 
     @Data
     public static class MovieInfoResult {
@@ -85,6 +86,14 @@ public class MovieInfoResponse {
         private String peopleNmEn;
         private String staffRoleNm;
     }
+
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)  // 알 수 없는 필드 무시
+    public static class MovieInfoResponseKMDB {
+        private String poster;
+        private String plot;
+    }
+
     public Movie toEntity() {
         return Movie.builder()
                 .movieCd(movieInfoResult.getMovieInfo().movieCd)
@@ -92,6 +101,8 @@ public class MovieInfoResponse {
                 .showTm(movieInfoResult.getMovieInfo().showTm)
                 .movieNameEN(movieInfoResult.getMovieInfo().movieNmEn)
                 .openDt(movieInfoResult.getMovieInfo().openDt)
+                .poster(kmdbInfo != null ? kmdbInfo.getPoster() : null)
+                .plot(kmdbInfo != null ? kmdbInfo.getPlot() : null)
                 .build();
     }
 }
