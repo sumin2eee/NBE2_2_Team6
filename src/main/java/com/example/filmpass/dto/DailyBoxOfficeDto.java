@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public  class DailyBoxOfficeDto {
-    private Long id;
     private String rnum;
     private String rank;
     private String rankInten;
