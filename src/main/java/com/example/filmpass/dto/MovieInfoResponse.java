@@ -2,8 +2,11 @@ package com.example.filmpass.dto;
 import com.example.filmpass.entity.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
+@Slf4j
 @Data
 public class MovieInfoResponse {
     private MovieInfoResult movieInfoResult;
@@ -21,7 +24,6 @@ public class MovieInfoResponse {
         private String movieNmEn;
         private String movieNmOg;
         private String showTm;
-        private String prdtYear;
         private String openDt;
         private String prdtStatNm;
         private String typeNm;
@@ -95,14 +97,25 @@ public class MovieInfoResponse {
     }
 
     public Movie toEntity() {
-        return Movie.builder()
-                .movieCd(movieInfoResult.getMovieInfo().movieCd)
-                .movieName(movieInfoResult.getMovieInfo().movieNm)
-                .showTm(movieInfoResult.getMovieInfo().showTm)
-                .movieNameEN(movieInfoResult.getMovieInfo().movieNmEn)
-                .openDt(movieInfoResult.getMovieInfo().openDt)
+        String directorName = movieInfoResult.getMovieInfo().getDirectors() != null && !movieInfoResult.getMovieInfo().getDirectors().isEmpty()
+                ? movieInfoResult.getMovieInfo().getDirectors().get(0).getPeopleNm()  // 첫 번째 감독 정보 가져오기
+                : null;
+
+        Movie movie = Movie.builder()
+                .movieCd(movieInfoResult.getMovieInfo().getMovieCd())
+                .movieName(movieInfoResult.getMovieInfo().getMovieNm())
+                .movieNameEN(movieInfoResult.getMovieInfo().getMovieNmEn())
+                .showTm(movieInfoResult.getMovieInfo().getShowTm())
+                .openDt(movieInfoResult.getMovieInfo().getOpenDt())
                 .poster(kmdbInfo != null ? kmdbInfo.getPoster() : null)
                 .plot(kmdbInfo != null ? kmdbInfo.getPlot() : null)
+                .directorName(directorName)  // 감독 이름 설정
                 .build();
+
+        log.info("Created Movie entity: {}", movie);
+
+        return movie;
     }
+
+
 }

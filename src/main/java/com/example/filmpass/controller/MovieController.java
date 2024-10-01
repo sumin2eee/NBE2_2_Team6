@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,30 +21,49 @@ public class MovieController {
     private final MovieRepository movieRepository;
     private final String apiKey = "236d4a6e256fa76f35804ceacdf28c39";
 
-    //영화 목록 - 영화의 1순위부터 10순위까지 보여주는 코드
-    @GetMapping("/dailyBoxOffice")
-    public ResponseEntity<String> getAndUpdateDailyBoxOffice() {
-        // 어제 날짜를 yyyyMMdd 형식으로 포맷팅
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime yesterday = today.minusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String targetDate = yesterday.format(formatter);
 
-        // MovieService를 호출하여 일일 박스오피스 정보를 가져옴
-        List<DailyBoxOfficeDto> dailyBoxOfficeList = movieService.getDailyBoxOffice(apiKey, targetDate);
+        //영화 목록 - 영화의 1순위부터 10순위까지 보여주는 코드
+        @GetMapping("/dailyBoxOffice")
+        public ResponseEntity<String> getAndUpdateDailyBoxOffice() {
+            // 어제 날짜를 yyyyMMdd 형식으로 포맷팅
+            LocalDateTime today = LocalDateTime.now();
+            LocalDateTime yesterday = today.minusDays(1);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            String targetDate = yesterday.format(formatter);
 
-        // 영화 제목 리스트 생성
-        List<String> movieTitles = dailyBoxOfficeList.stream()
-                .map(DailyBoxOfficeDto::getMovieNm)  // 영화 제목만 리스트로 추출
-                .collect(Collectors.toList());
+            // MovieService를 호출하여 일일 박스오피스 정보를 가져옴
+            List<DailyBoxOfficeDto> dailyBoxOfficeList = movieService.getDailyBoxOffice(apiKey, targetDate);
 
-        // 영화 포스터와 줄거리 업데이트 (영화 제목 리스트만 전달)
-        movieService.updateMoviesWithPosterAndPlot(movieTitles);
+            // 1순위부터 10순위까지의 영화를 가져와 영화 정보를 DB에 저장하고 포스터와 줄거리 업데이트
+            for (DailyBoxOfficeDto dailyBoxOfficeDto : dailyBoxOfficeList) {
+                String movieCd = dailyBoxOfficeDto.getMovieCd();
 
-        // 응답 반환
-        return ResponseEntity.ok("Daily box office movies updated with poster and plot.");
-    }
+                // 영화가 DB에 있는지 확인
+                if (!movieRepository.existsByMovieCd(movieCd)) {
+                    log.info("Movie with movieCd {} does not exist in DB, fetching details.", movieCd);
 
+                    // KOBIS API를 사용하여 영화 상세 정보를 가져옴
+                    Movie movie = movieService.getMovieInfo(movieCd);
+
+                    // 영화 정보가 null이 아닐 때만 저장
+                    if (movie != null) {
+                        // 영화 정보 저장
+                        movieRepository.save(movie);
+                        log.info("Saved movie to DB: {}", movie);
+
+                        // KMDB에서 포스터와 줄거리 가져와 업데이트
+                        movieService.updateMovieWithPosterAndPlot(movie, movie.getDirectorName());
+                    }
+                } else {
+                    log.warn("Movie with movieCd {} already exists in DB", movieCd);
+                }
+            }
+
+            // 응답 반환
+            return ResponseEntity.ok("Daily box office movies updated with poster and plot.");
+        }
+
+    // 특정 영화 코드로 영화 정보를 가져오는 메서드
     @GetMapping("/dailyBoxOffice/{movieCd}")
     public Movie getMovieInfo(@PathVariable("movieCd") String movieCd) {
         return movieService.getMovieInfo(movieCd);
