@@ -109,6 +109,7 @@ public class MovieInfoResponse {
                 .openDt(movieInfoResult.getMovieInfo().getOpenDt())
                 .poster(kmdbInfo != null ? kmdbInfo.getPoster() : null)
                 .plot(kmdbInfo != null ? kmdbInfo.getPlot() : null)
+                .ageRating(String.valueOf(movieInfoResult.getMovieInfo().audits.get(0).getWatchGradeNm()))
                 .directorName(directorName)  // 감독 이름 설정
                 .build();
 
