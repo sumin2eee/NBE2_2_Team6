@@ -30,7 +30,6 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final WebClient webClientKMDB;
 
-    //일일박스오피스 API에서 1위부터 10위까지의 영화 불러오는 코드
     // 일일박스오피스 API에서 1위부터 10위까지의 영화 불러오는 코드
     public List<DailyBoxOfficeDto> getDailyBoxOffice(String apiKey, String targetDate) {
         log.info("Fetching daily box office data for target date: {}", targetDate);
@@ -88,7 +87,7 @@ public class MovieService {
         return dailyBoxOfficeDtos;
     }
 
-
+    //영화 제목으로 줄거리와 포스터 가져오는 코드
     public void updateMovieWithPosterAndPlot(Movie movie, String directorName) {
         log.info("Starting poster and plot update for movie: {}", movie.getMovieName());
 
@@ -142,7 +141,7 @@ public class MovieService {
                 movie.setPlot(movieInfo.getPlot() != null ? movieInfo.getPlot() : "");
                 log.info("Updated movie with poster: {}, plot: {}", movie.getPoster(), movie.getPlot());
 
-                // 영화 정보 저장 (업데이트)
+
                 movieRepository.save(movie);
                 log.info("Movie updated in DB: {}", movie.getMovieName());
             } else {
@@ -206,8 +205,6 @@ public class MovieService {
             return null;
         }
     }
-
-
 
 
 
