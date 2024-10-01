@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     boolean existsByMovieCd(String movieCd);
-
+    Optional<Movie> findByMovieName(String movieName);
     Movie findByMovieCd(String movieCd);
 
     Movie findByMovieName(String movieName);
