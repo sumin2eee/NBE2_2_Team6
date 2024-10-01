@@ -24,7 +24,7 @@ public class MovieController {
 
         //영화 목록 - 영화의 1순위부터 10순위까지 보여주는 코드
         @GetMapping("/dailyBoxOffice")
-        public ResponseEntity<String> getAndUpdateDailyBoxOffice() {
+        public List<DailyBoxOfficeDto> getDailyBoxOffice() {
             // 어제 날짜를 yyyyMMdd 형식으로 포맷팅
             LocalDateTime today = LocalDateTime.now();
             LocalDateTime yesterday = today.minusDays(1);
@@ -58,9 +58,9 @@ public class MovieController {
                     log.warn("Movie with movieCd {} already exists in DB", movieCd);
                 }
             }
-
+            log.info("daily box office movies updated with poster and plot");
             // 응답 반환
-            return ResponseEntity.ok("Daily box office movies updated with poster and plot.");
+            return movieService.getDailyBoxOffice(apiKey, targetDate);
         }
 
     // 특정 영화 코드로 영화 정보를 가져오는 메서드
