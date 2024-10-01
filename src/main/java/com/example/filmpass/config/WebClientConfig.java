@@ -12,4 +12,10 @@ public class WebClientConfig {
                 .baseUrl("http://www.kobis.or.kr/kobisopenapi/webservice/rest")
                 .build();
     }
+    @Bean
+    public WebClient webClientKMDB() {
+        return WebClient.builder()
+                .baseUrl("http://api.koreafilm.or.kr")
+                .build();
+    }
 }

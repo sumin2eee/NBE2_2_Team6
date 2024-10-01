@@ -40,7 +40,11 @@ public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교
 
     private String openDt;  //개봉년도
 
+    @Lob  // 이 어노테이션을 추가하여 plot을 TEXT로 처리
+    @Column(columnDefinition = "TEXT")  // 명시적으로 TEXT 타입 설정
     private String plot; //줄거리
 
+    @Lob  // 이 어노테이션을 추가하여 plot을 TEXT로 처리
+    @Column(columnDefinition = "TEXT")
     private String poster;
 }
