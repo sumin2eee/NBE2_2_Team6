@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "cinema_movie")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class CinemaMovie {
