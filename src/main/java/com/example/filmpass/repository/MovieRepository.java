@@ -14,7 +14,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     Optional<Movie> findByMovieName(String movieName);
     Movie findByMovieCd(String movieCd);
 
-    Movie findByMovieName(String movieName);
 
     // 줄거리 및 포스터 URL 업데이트를 위한 메소드
     @Transactional
