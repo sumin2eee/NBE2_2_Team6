@@ -49,13 +49,13 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password"); // 401 Unauthorized 응답
         }
 
-        // JWT 토큰 생성
+        // 로그인 시 JWT 액세스 토큰 바로 생성 그리고 밑에
         String jwtToken = jwtUtil.generateToken(memberLoginDto.getId());
 
-        // JWT 토큰을 쿠키에 저장
+        // JWT 토큰을 쿠키에 저장//이제 서버에 요청시 쿠키에 토큰 정보들이 자동으로 포함됨
         Cookie jwtCookie = new Cookie("token", jwtToken);
-        jwtCookie.setHttpOnly(true); // 보안 강화
-        jwtCookie.setMaxAge(60 * 60 * 10); // 10시간 유효
+        jwtCookie.setHttpOnly(true); //HttpOnly하면 Js로 수정불가해서 추가함
+        jwtCookie.setMaxAge(60 * 60 * 1); // 1시간 유효
         response.addCookie(jwtCookie); // HttpServletResponse를 사용해 쿠키 추가
 
         return ResponseEntity.ok("Login successful"); // 200 OK 응답

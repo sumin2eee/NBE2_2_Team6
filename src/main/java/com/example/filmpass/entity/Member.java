@@ -37,6 +37,8 @@ public class Member {
     private String image; // 프로필 사진
     private String role; // 권한
 
+    private String refreshToken; // 재생성 토큰
+
     /*@JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Reservation> orders = new ArrayList<>();*/
