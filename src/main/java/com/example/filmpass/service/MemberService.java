@@ -4,6 +4,9 @@ import com.example.filmpass.dto.MemberSignupDto;
 import com.example.filmpass.entity.Member;
 import com.example.filmpass.jwt.JwtUtil; // JwtUtil 추가
 import com.example.filmpass.repository.MemberRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,10 +24,12 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil; // JwtUtil 추가
 
+
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        // 초기화
     }
     //사용자 정보 가져오기
     @Override
@@ -55,10 +60,9 @@ public class MemberService implements UserDetailsService {
 
         memberRepository.save(member);
     }
-
-    // 로그인
+    // MemberService.java
     public Map<String, String> login(String username, String password) {
-        // 사용자 인증 기능// 이후 기능 더 추가 예정
+        // 사용자 인증 기능
         UserDetails userDetails = loadUserByUsername(username);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             String token = jwtUtil.generateToken(username);
@@ -71,4 +75,6 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("Login failed");
         }
     }
+
+
 }
