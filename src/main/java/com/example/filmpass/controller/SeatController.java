@@ -22,12 +22,11 @@ public class SeatController {
 
     //좌석 생성
 //    {
-//        "rows": 5,
-//            "cols": 10
+//        "cinemaId": 1
 //    }
     @PostMapping()
     public ResponseEntity<List<SeatDto>> create(@RequestBody SeatRequest seatRequest) {
-        List<SeatDto> createdSeats = seatService.create(seatRequest.getRows(), seatRequest.getCols());
+        List<SeatDto> createdSeats = seatService.create(seatRequest);
         return ResponseEntity.ok(createdSeats);
     }
 
@@ -38,6 +37,11 @@ public class SeatController {
     }
 
     //좌석 예매
+//    {
+//        "cinemaId":1,
+//            "rows":5,
+//            "cols":1
+//    }
     @PutMapping("/choice")
     public ResponseEntity<SeatDto> update(@RequestBody SeatRequest seatRequest) {
         return ResponseEntity.ok(seatService.reserveSeat(seatRequest));
