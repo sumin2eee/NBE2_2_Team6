@@ -68,6 +68,13 @@ public class MemberService implements UserDetailsService {
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             String token = jwtUtil.generateToken(username);
             String refreshToken = jwtUtil.generateRefreshToken(username);
+
+            // 리프레시 토큰을 DB에 저장
+            Member member = memberRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            member.setRefreshToken(refreshToken); // 리프레시 토큰 설정
+            memberRepository.save(member); // DB에 업데이트
+
+
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", token);
             tokens.put("refreshToken", refreshToken);

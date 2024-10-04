@@ -33,12 +33,14 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+
     // 회원가입 POST 요청
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody MemberSignupDto memberSignupDto) {
         memberService.signup(memberSignupDto); // 회원가입 처리
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully"); // 201 Created 응답
     }
+
     /*// 로그인 POST 요청
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
@@ -88,6 +90,7 @@ public class MemberController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
+
     }
 }
 
