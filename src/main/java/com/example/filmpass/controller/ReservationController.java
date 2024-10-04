@@ -6,10 +6,9 @@ import com.example.filmpass.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,8 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservationController {
     private final ReservationService reservationService;
 
+
+    //예매 등록
     @PostMapping()
     public ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
         return ResponseEntity.ok(reservationService.create(reservationDto));
+    }
+
+    //예매 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservationDto> read(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.read(id));
     }
 }
