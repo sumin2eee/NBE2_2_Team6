@@ -22,8 +22,8 @@ public class Seat {
     private int seatCol;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinema_movie_id")
-    private CinemaMovie cinemaMovie;
+    @JoinColumn(name = "cinema_id")
+    private Cinema cinema;
 
     private boolean isReserved;
 

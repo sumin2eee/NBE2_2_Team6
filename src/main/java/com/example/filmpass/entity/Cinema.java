@@ -14,10 +14,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Cinema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cinema_movie_id")
     private Long cinemaId;
 
     private String cinemaName;
 
-    private int maxSeat;
+    private int seatRow;
+
+    private int seatCol;
+
 }
