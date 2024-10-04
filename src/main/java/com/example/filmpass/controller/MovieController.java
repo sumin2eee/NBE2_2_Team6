@@ -68,6 +68,12 @@ public class MovieController {
     public Movie getMovieInfo(@PathVariable("movieCd") String movieCd) {
         return movieService.getMovieInfo(movieCd);
     }
+
+//    @GetMapping("/movies")
+//    public ResponseEntity<List<Movie>> readAll() {
+//            List<Movie> movie = movieRepository.findAll();
+//            return ResponseEntity.ok(movie);
+//    }
 }
 
 //@GetMapping("/dailyBoxOffice/{movieCd}")

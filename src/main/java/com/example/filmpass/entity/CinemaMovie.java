@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +34,9 @@ public class CinemaMovie {
 //    @OneToMany(mappedBy = "cinemaMovie")
 //    private List<Seat> seat  = new ArrayList<>();
 
-    private LocalDateTime screenDate;
+    private LocalDate screenDate;
 
-    private LocalDateTime screenTime;
+    private LocalTime screenTime;
 
 
 }

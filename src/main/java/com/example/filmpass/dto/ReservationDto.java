@@ -29,18 +29,19 @@ public class ReservationDto {
         this.userId = reservation.getMemberId();
         this.reservationDate = reservation.getBookingDate();
         this.seatId = reservation.getSeat().getSeatId();
-//        this.cinemaMovieId = reservation.getCinemaMovie().getCinemaMovieId();
+        this.cinemaMovieId = reservation.getCinemaMovie().getCinemaMovieId();
         this.adult=reservation.getAdult();
         this.child=reservation.getChild();
         this.youth=reservation.getYouth();
     }
 
-    public Reservation toEntity(Seat seat) {
+    public Reservation toEntity(Seat seat, CinemaMovie cinemaMovie) {
 
         return Reservation.builder()
                 .reserveId(reservationId)
                 .memberId(userId)
                 .seat(seat)
+                .cinemaMovie(cinemaMovie)
                 .bookingDate(LocalDateTime.now())
                 .adult(adult)
                 .youth(youth)
