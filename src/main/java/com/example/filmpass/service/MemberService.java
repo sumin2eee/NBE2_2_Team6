@@ -1,41 +1,81 @@
 package com.example.filmpass.service;
 
-import com.example.filmpass.dto.MemberDTO;
+import com.example.filmpass.dto.MemberSignupDto;
 import com.example.filmpass.entity.Member;
+import com.example.filmpass.jwt.JwtUtil; // JwtUtil 추가
 import com.example.filmpass.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-@Transactional
-@RequiredArgsConstructor
-@Log4j2
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil; // JwtUtil 추가
 
-    //회원가입 - 이메일, 패스워드, 번호, 프로필 사진 입력
-    public Boolean joinProcess(MemberDTO memberDTO){
-        String email = memberDTO.getEmail();
-        String password = memberDTO.getPassword();
-        String number = memberDTO.getNumber();
-        String image = memberDTO.getImage();
 
-        if(memberRepository.existsByEmail(email)){
-            return false;
-        }
-        Member member = memberDTO.toEntity();
-        //비밀번호 암호화
-        member.setPassword(bCryptPasswordEncoder.encode(password));
-        //회원가입한 사람에게 USER권한 부여
-        member.setRole("ROLE_USER");
-        //회원가입 정보 DB 저장
-        memberRepository.save(member);
-        return true;
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        // 초기화
     }
+    //사용자 정보 가져오기
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return new org.springframework.security.core.userdetails.User(member.getId(), member.getPassword(), new ArrayList<>());
+    }
+    //회원가입
+    public void signup(MemberSignupDto memberSignupDto) {
+        Member member = new Member();
+        member.setPassword(passwordEncoder.encode(memberSignupDto.getPassword()));
+        member.setId(memberSignupDto.getId());
+        member.setEmail(memberSignupDto.getEmail());
+        member.setNumber(memberSignupDto.getNumber());
+
+        // 기본 이미지, 권한
+        if (memberSignupDto.getImage() == null || memberSignupDto.getImage().isEmpty()) {
+            member.setImage("default_image.png");
+        } else {
+            member.setImage(memberSignupDto.getImage());
+        }
+
+        if (memberSignupDto.getRole() == null || memberSignupDto.getRole().isEmpty()) {
+            member.setRole("USER");
+        } else {
+            member.setRole(memberSignupDto.getRole());
+        }
+
+        memberRepository.save(member);
+    }
+
+    // 로그인
+    public Map<String, String> login(String username, String password) {
+        // 사용자 인증 기능
+        UserDetails userDetails = loadUserByUsername(username);
+        if (passwordEncoder.matches(password, userDetails.getPassword())) {
+            String token = jwtUtil.generateToken(username);
+            String refreshToken = jwtUtil.generateRefreshToken(username);
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", token);
+            tokens.put("refreshToken", refreshToken);
+            return tokens;
+        } else {
+            throw new RuntimeException("Login faileddddd");
+        }
+    }
+
+
 }
