@@ -60,7 +60,8 @@ public class MemberService implements UserDetailsService {
 
         memberRepository.save(member);
     }
-    // MemberService.java
+
+    // 로그인
     public Map<String, String> login(String username, String password) {
         // 사용자 인증 기능
         UserDetails userDetails = loadUserByUsername(username);
@@ -72,7 +73,7 @@ public class MemberService implements UserDetailsService {
             tokens.put("refreshToken", refreshToken);
             return tokens;
         } else {
-            throw new RuntimeException("Login failed");
+            throw new RuntimeException("Login faileddddd");
         }
     }
 
