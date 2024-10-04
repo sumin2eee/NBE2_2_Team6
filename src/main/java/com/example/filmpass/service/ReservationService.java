@@ -1,8 +1,6 @@
 package com.example.filmpass.service;
 
 import com.example.filmpass.dto.ReservationDto;
-import com.example.filmpass.entity.Cinema;
-import com.example.filmpass.entity.CinemaMovie;
 import com.example.filmpass.entity.Reservation;
 import com.example.filmpass.entity.Seat;
 import com.example.filmpass.repository.ReservationRepository;
@@ -13,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,6 +33,12 @@ public class ReservationService {
         Reservation reservation = reservationDto.toEntity(seat);
         reservationRepository.save(reservation);
 
+        return new ReservationDto(reservation);
+    }
+
+    //예매 조회
+    public ReservationDto read(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         return new ReservationDto(reservation);
     }
 }
