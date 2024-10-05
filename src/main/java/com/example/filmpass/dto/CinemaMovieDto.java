@@ -3,6 +3,7 @@ package com.example.filmpass.dto;
 import com.example.filmpass.entity.Cinema;
 import com.example.filmpass.entity.CinemaMovie;
 import com.example.filmpass.entity.Movie;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +16,15 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CinemaMovieDto {
+    @JsonIgnore
     private Long movieId;
 
+    @JsonIgnore
     private Long cinemaId;
+
+    private String title;
+
+    private String cinemaName;
 
     private LocalDate screenDate;
 
@@ -26,8 +33,8 @@ public class CinemaMovieDto {
 
 
     public CinemaMovieDto(Long id, CinemaMovie cinemaMovie) {
-        this.movieId = id;
-        this.cinemaId = cinemaMovie.getCinema().getCinemaId();
+        this.title = cinemaMovie.getMovie().getMovieName();
+        this.cinemaName = cinemaMovie.getCinema().getCinemaName();
         this.screenDate = cinemaMovie.getScreenDate();
         this.screenTime = cinemaMovie.getScreenTime();
     }

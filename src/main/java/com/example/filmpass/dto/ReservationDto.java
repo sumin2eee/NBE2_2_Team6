@@ -29,7 +29,7 @@ public class ReservationDto {
         this.userId = reservation.getMemberId();
         this.reservationDate = reservation.getBookingDate();
         this.seatId = reservation.getSeat().getSeatId();
-        this.cinemaMovieId = reservation.getCinemaMovie().getCinemaMovieId();
+//        this.cinemaMovieId = reservation.getCinemaMovie().getCinemaMovieId();
         this.adult=reservation.getAdult();
         this.child=reservation.getChild();
         this.youth=reservation.getYouth();

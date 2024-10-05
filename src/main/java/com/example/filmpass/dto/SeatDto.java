@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SeatDto {
     private Long seatId;
+    private String cinemaName;
     private int seatX;
     private int seatY;
     private boolean isReserved;
-    private Long cinemaId;
+//    private Long cinemaId;
 
     public Seat toEntity(Cinema cinema) {
         Seat seat = new Seat();

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,6 +29,13 @@ public class CinemaMovieService {
     public CinemaMovieDto registerCinema(CinemaMovieDto cinemaMovieDto) {
         Movie movie = movieRepository.findById(cinemaMovieDto.getMovieId()).get();
         Cinema cinema = cinemaRepository.findById(cinemaMovieDto.getCinemaId()).get();
+
+        Optional<CinemaMovie> error = cinemaMovieRepository
+                .findByMovieMovieIdAndCinemaCinemaIdAndScreenDateAndScreenTime(movie.getMovieId(), cinema.getCinemaId(), cinemaMovieDto.getScreenDate(), cinemaMovieDto.getScreenTime());
+
+        if(error.isPresent()) {
+            throw new IllegalArgumentException("이미 등록된 영화의 상영정보 입니다");
+        }
 
         CinemaMovie cinemaMovie = cinemaMovieDto.toEntity(movie, cinema);
         CinemaMovie savedCinemaMovie = cinemaMovieRepository.save(cinemaMovie);
@@ -43,7 +51,9 @@ public class CinemaMovieService {
             infoDto.add(new CinemaMovieDto(movieId, cinemaMovie));
         }
 
-        return new MovieListDto(movieId, infoDto);
+        CinemaMovie movieName = cinemaMovieList.get(0);
+
+        return new MovieListDto(movieId, movieName, infoDto);
     }
 
 

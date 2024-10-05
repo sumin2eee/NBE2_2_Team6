@@ -31,9 +31,9 @@ public class SeatController {
     }
 
     //좌석 조회
-    @GetMapping()
-    public List<SeatDto> read() {
-        return seatService.read();
+    @GetMapping("/{cinemaId}")
+    public List<SeatDto> read(@PathVariable Long cinemaId) {
+        return seatService.read(cinemaId);
     }
 
     //좌석 예매
