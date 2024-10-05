@@ -1,6 +1,7 @@
 package com.example.filmpass.service;
 
 import com.example.filmpass.dto.ReservationDto;
+import com.example.filmpass.dto.ReservationReadDto;
 import com.example.filmpass.entity.CinemaMovie;
 import com.example.filmpass.entity.Reservation;
 import com.example.filmpass.entity.Seat;
@@ -32,9 +33,12 @@ public class ReservationService {
         CinemaMovie cinemaMovie = cinemaMovieRepository.findById(reservationDto.getCinemaMovieId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 영화가 없습니다"));
 
-        if(!seat.isReserved()) {
-            throw new IllegalStateException("예매한 좌석이 아닙니다");
+        Optional<Reservation> error = reservationRepository.findBySeatSeatId(seat.getSeatId());
+
+        if(error.isPresent()) {
+            throw new IllegalArgumentException("이미 등록된 좌석입니다");
         }
+
 
         Reservation reservation = reservationDto.toEntity(seat,cinemaMovie);
         reservationRepository.save(reservation);
@@ -43,8 +47,8 @@ public class ReservationService {
     }
 
     //예매 조회
-    public ReservationDto read(Long reservationId) {
+    public ReservationReadDto read(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
-        return new ReservationDto(reservation);
+        return new ReservationReadDto(reservation);
     }
 }

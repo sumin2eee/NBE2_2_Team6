@@ -47,7 +47,7 @@ public class SeatService {
                 seatDto.setSeatX(row);
                 seatDto.setSeatY(col);
                 seatDto.setReserved(false);
-                seatDto.setCinemaId(cinema.getCinemaId());
+                seatDto.setCinemaName(cinema.getCinemaName());
 
                 Seat seat = seatDto.toEntity(cinema);
                 seatRepository.save(seat);
@@ -61,8 +61,8 @@ public class SeatService {
     }
 
     //좌석 조회
-    public List<SeatDto> read() {
-        List<Seat> seats = seatRepository.findAll();
+    public List<SeatDto> read(Long cinemaId) {
+        List<Seat> seats = seatRepository.findByCinemaCinemaId(cinemaId);
         List<SeatDto> seatDtoList = new ArrayList<>();
 
         for(Seat seat : seats) {
@@ -70,7 +70,7 @@ public class SeatService {
             seatDto.setSeatId(seat.getSeatId());
             seatDto.setSeatX(seat.getSeatRow());
             seatDto.setSeatY(seat.getSeatCol());
-            seatDto.setCinemaId(seat.getCinema().getCinemaId());
+            seatDto.setCinemaName(seat.getCinema().getCinemaName());
             seatDto.setReserved(seat.isReserved());
 
             seatDtoList.add(seatDto);
