@@ -45,6 +45,10 @@ dependencies {
 
 	// JUnit 5 의존성 추가
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+
+	//json-simple 의존성
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
 }
 
 // Deprecated API 경고를 출력하기 위한 설정 추가
