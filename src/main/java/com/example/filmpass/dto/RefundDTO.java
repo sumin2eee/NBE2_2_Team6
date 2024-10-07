@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 public class RefundDTO {
     private String orderNo; // 주문 번호
     private Integer amount; // 환불할 금액
-    private LocalDateTime refundDate; // 환불 요청 날짜
+    private LocalDateTime refundRequestDate; // 환불 요청 날짜
 }

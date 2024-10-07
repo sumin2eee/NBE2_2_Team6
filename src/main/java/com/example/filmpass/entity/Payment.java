@@ -30,12 +30,18 @@ public class Payment {
 
     private String orderNo;
 
-    private Integer refundAmount;    // 환불된 금액 (부분 환불을 위해)
+    private Integer refundAmount = 0;    // 환불된 금액 (부분 환불을 위해)
+
+    private Integer availableRefundAmount; // 결제금액 - 누적된 횐불 금액 값이 들어감
 
     @Enumerated(EnumType.STRING) // Enum을 String으로 저장
     private RefundStatus refundStatus;
 
-    private LocalDateTime refundDate; // 환불 요청 날짜
+    private LocalDateTime refundRequestDate; // 환불 요청 날짜
+
+    private LocalDateTime refundDate; // 환불 처리 날짜
+
+
 
 //    @OneToOne
 //    @JoinColumn(name = "reservation_id")
