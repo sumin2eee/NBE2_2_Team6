@@ -4,8 +4,6 @@ import com.example.filmpass.util.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.parameters.P;
-
 import java.time.LocalDateTime;
 
 @Entity

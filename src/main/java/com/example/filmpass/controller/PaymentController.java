@@ -2,30 +2,13 @@ package com.example.filmpass.controller;
 
 import com.example.filmpass.dto.PaymentDTO;
 import com.example.filmpass.dto.RefundDTO;
-import com.example.filmpass.entity.Payment;
-import com.example.filmpass.repository.PaymentRepository;
 import com.example.filmpass.service.PaymentService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.json.simple.JSONObject;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+
 @AllArgsConstructor
 @RestController
 @Log4j2

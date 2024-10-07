@@ -9,16 +9,13 @@ import com.example.filmpass.repository.PaymentRepository;
 import com.example.filmpass.util.RefundStatus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.json.simple.JSONObject;
-import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -81,6 +78,7 @@ public class PaymentService {
 
             Payment payment = new Payment();
             payment.setAmount(paymentDTO.getAmount());
+            payment.setOrderNo(paymentDTO.getOrderNo()); // orderNo 저장 추가
             // JSON 파싱: 요청 후 응답으로 받은 payToken 가져오기
             JsonNode jsonNode = objectMapper.readTree(responseBody.toString());
             String token = jsonNode.get("payToken").asText();
@@ -88,8 +86,6 @@ public class PaymentService {
 
             //결제 완료 전이므로 PAY_STANDBY로 상태 설정
             payment.setStatus(PayStatus.PAY_STANDBY);
-
-            payment.setOrderNo(paymentDTO.getOrderNo());
 
 
             //---->
