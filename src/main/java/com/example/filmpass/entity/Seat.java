@@ -7,8 +7,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "seat")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Seat {
@@ -21,6 +22,13 @@ public class Seat {
     private int seatCol;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinema_id")
+    private Cinema cinema;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_movie_id")
     private CinemaMovie cinemaMovie;
+
+    private boolean isReserved;
+
 }

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>좌석 선택</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .seat-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); /* 10개의 열 */
+            gap: 10px; /* 좌석 간의 간격 */
+            margin-top: 20px;
+        }
+        .seat {
+            width: 50px; /* 좌석 너비 */
+            height: 50px; /* 좌석 높이 */
+            background-color: #28a745; /* 예약 가능한 좌석 색 */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .reserved {
+            background-color: #dc3545; /* 예약된 좌석 색 */
+            cursor: not-allowed;
+        }
+        .selected {
+            background-color: #ff7f50; /* 선택된 좌석 색 */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .reserve-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .reserve-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>좌석 선택</h1>
+<div class="seat-container" id="seatContainer"></div>
+<div class="button-container">
+    <div id="selectedSeatsContainer">선택된 좌석: 없음</div>
+    <button id="reserveButton" class="reserve-button" style="display: none;">예매하기</button>
+</div>
+
+<script>
+    // URL 파라미터에서 cinemaMovieId 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const cinemaMovieId = urlParams.get('cinemaMovieId');
+
+    // 좌석 정보 요청
+    fetch(`http://localhost:8080/seat/${cinemaMovieId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 좋지 않습니다.');
+            }
+            return response.json();
+        })
+        .then(seats => {
+            displaySeats(seats);
+        })
+        .catch(error => console.error('좌석 정보를 가져오는 중 오류 발생:', error));
+
+    // 좌석 표시 함수
+    function displaySeats(seats) {
+        const seatContainer = document.getElementById('seatContainer');
+        seatContainer.innerHTML = ''; // 이전 데이터 초기화
+
+        seats.forEach(seat => {
+            const seatDiv = document.createElement('div');
+            seatDiv.classList.add('seat');
+            seatDiv.dataset.seatId = seat.seatId; // 좌석 ID를 dataset에 저장
+
+            seatDiv.textContent = `${seat.seatX} - ${seat.seatY}`; // 좌석 위치 표시
+
+            // 좌석이 예약된 경우 클래스 추가
+            if (seat.reserved) {
+                seatDiv.classList.add('reserved');
+                seatDiv.textContent += ' (예약됨)'; // 예약된 경우 추가 정보 표시
+            } else {
+                // 좌석 클릭 이벤트 추가
+                seatDiv.addEventListener('click', () => {
+                    // 선택된 좌석 처리
+                    seatDiv.classList.toggle('selected'); // 선택된 좌석 색상 변경
+                    updateSelectedSeats();
+                });
+            }
+
+            seatContainer.appendChild(seatDiv);
+        });
+    }
+
+    // 선택된 좌석 업데이트 함수
+    function updateSelectedSeats() {
+        const selectedSeats = [...document.querySelectorAll('.seat.selected')].map(seat => {
+            return {
+                seatId: Number(seat.dataset.seatId), // dataset에서 seatId를 가져옵니다.
+                seatX: Number(seat.textContent.split(' - ')[0]), // seatX 추출
+                seatY: Number(seat.textContent.split(' - ')[1])  // seatY 추출
+            };
+        });
+
+        const selectedSeatsContainer = document.getElementById('selectedSeatsContainer');
+        const reserveButton = document.getElementById('reserveButton');
+
+        if (selectedSeats.length > 0) {
+            selectedSeatsContainer.textContent = `선택된 좌석: ${selectedSeats.map(seat => seat.seatId).join(', ')}`; // seatId 표시
+            reserveButton.style.display = 'inline-block'; // 예매하기 버튼 표시
+        } else {
+            selectedSeatsContainer.textContent = '선택된 좌석: 없음';
+            reserveButton.style.display = 'none'; // 예매하기 버튼 숨김
+        }
+
+        // 예매하기 버튼 클릭 이벤트
+        reserveButton.onclick = () => {
+            const requestBody = {
+                cinemaMovieId: cinemaMovieId, // 시네마 무비 ID
+                rows: selectedSeats[0].seatX, // 선택한 좌석의 행 (seatX)
+                cols: selectedSeats[0].seatY  // 선택한 좌석의 열 (seatY)
+            };
+
+            fetch('http://localhost:8080/seat/choice', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // 서버에서 예약 ID를 JSON 형태로 받기
+                    } else {
+                        throw new Error('예매 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                    }
+                })
+                .then(data => {
+                    const seatId = selectedSeats[0].seatId;
+                    window.location.href = `http://localhost:8080/reservation.html?cinemaMovieId=${cinemaMovieId}&seatId=${seatId}`;
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(error.message);
+                });
+        };
+    }
+
+</script>
+
+</body>
+</html>

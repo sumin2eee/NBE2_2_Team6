@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 정보</title>
+    <style>
+        /* 스타일을 필요에 맞게 추가하세요 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 200px; /* 포스터 크기 조절 */
+        }
+        #screeningInfo {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>영화 정보</h1>
+<div id="movieDetails"></div>
+<div id="screeningInfo"></div>
+
+<script>
+    async function fetchMovieInfo(movieId) {
+        try {
+            const response = await fetch(`http://localhost:8080/dailyBoxOffice/${movieId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const movie = await response.json();
+            displayMovieInfo(movie);
+            fetchScreeningInfo(movieId); // 상영 정보 가져오기
+        } catch (error) {
+            console.error('Error fetching movie info:', error);
+        }
+    }
+
+    async function fetchScreeningInfo(movieId) {
+        try {
+            const response = await fetch(`http://localhost:8080/cinemaMovie/${movieId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const screenings = await response.json();
+            displayScreeningInfo(screenings);
+        } catch (error) {
+            console.error('Error fetching screening info:', error);
+        }
+    }
+
+    function displayMovieInfo(movie) {
+        const movieDetails = document.getElementById('movieDetails');
+        movieDetails.innerHTML = `
+            <h2>${movie.movieName} (${movie.movieNameEN})</h2>
+            <img src="${movie.poster}" alt="${movie.movieName}">
+            <p>감독: ${movie.directorName}</p>
+            <p>관람등급: ${movie.ageRating}</p>
+            <p>상영시간: ${movie.showTm}분</p>
+            <p>개봉일: ${movie.openDt}</p>
+            <p>줄거리: ${movie.plot}</p>
+            <a href="screeningInfo.html?movieId=${movie.movieId}" id="reserveButton">상영 정보</a>        `;
+    }
+
+    function displayScreeningInfo(screenings) {
+        const screeningInfo = document.getElementById('screeningInfo');
+        screeningInfo.innerHTML = '<h3>상영 정보</h3>';
+        screenings.info.forEach(screening => {
+            screeningInfo.innerHTML += `
+                <p>${screening.cinemaName} - ${screening.screenDate} ${screening.screenTime}</p>
+            `;
+        });
+    }
+
+    // URL에서 movieId를 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('movieId');
+    if (movieId) {
+        fetchMovieInfo(movieId);
+    } else {
+        console.error('No movie ID found in the URL.');
+    }
+</script>
+
+</body>
+</html>

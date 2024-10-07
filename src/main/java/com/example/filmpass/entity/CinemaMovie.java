@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "cinema_movie")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class CinemaMovie {
@@ -32,9 +34,9 @@ public class CinemaMovie {
     @OneToMany(mappedBy = "cinemaMovie")
     private List<Seat> seat  = new ArrayList<>();
 
-    private LocalDateTime screenDate;
+    private LocalDate screenDate;
 
-    private LocalDateTime screenTime;
+    private LocalTime screenTime;
 
 
 }

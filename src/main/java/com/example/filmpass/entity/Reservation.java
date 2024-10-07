@@ -2,9 +2,10 @@ package com.example.filmpass.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservation")
@@ -24,7 +25,12 @@ public class Reservation {
     @JoinColumn(name = "cinema_movie_id")
     private CinemaMovie cinemaMovie;
 
-    private LocalDate bookingDate;
+    @CreatedDate
+    private LocalDateTime bookingDate;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
 
     private int adult;
 
