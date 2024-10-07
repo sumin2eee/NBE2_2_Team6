@@ -61,6 +61,15 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
+    // 멤버 찾기
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+    public void updateMemberCache(Member member) {
+        // 캐시를 업데이트하는 로직
+    }
+
     // 로그인
     public Map<String, String> login(String username, String password) {
         // 사용자 인증 기능
@@ -83,6 +92,14 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("Login faileddddd");
         }
     }
+    public void updateProfileImage(String username, String newImage) {
+        Member member = memberRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        member.setImage(newImage); // 새로운 이미지로 업데이트
+        memberRepository.save(member); // 변경 사항 저장
+    }
+
 
 
 }
