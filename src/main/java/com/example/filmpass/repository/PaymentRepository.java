@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Payment findByOrderNo(String orderNo);  // orderNo로 Payment 찾기
 
-   Optional<Payment> findTopByOrderByOrderNoDesc();
+   Optional<Payment> findTopByOrderByCreatedTsDesc();
 }

@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.io.BufferedOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import java.time.LocalDateTime;
@@ -83,7 +84,7 @@ public class PaymentService {
             JsonNode jsonNode = objectMapper.readTree(responseBody.toString());
             String token = jsonNode.get("payToken").asText();
             payment.setPayToken(token);
-
+            payment.setCreatedTs(LocalDateTime.now());
             //결제 완료 전이므로 PAY_STANDBY로 상태 설정
             payment.setStatus(PayStatus.PAY_STANDBY);
 
@@ -136,7 +137,10 @@ public class PaymentService {
 
             //<--- 응답받은 정보는 필요한 정보 파싱해서 entity에 저장
             JsonNode jsonNode2 = objectMapper.readTree(responseBody.toString());
-            String paidTs = jsonNode2.get("paidTs").asText();
+            String time = jsonNode2.get("paidTs").asText();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime paidTs = LocalDateTime.parse(time, formatter);
+
             Payment payment = paymentRepository.findByOrderNo(orderNo);
             payment.setStatus(PayStatus.PAY_COMPLETE);
             payment.setPaidTs(paidTs);
@@ -163,14 +167,14 @@ public class PaymentService {
 
     //결제 취소 메서드 - 상태 결제 취소로 바뀌도록
     public void payCancle() {
-        String orderNo = getLastOrderNo();
+        String orderNo = getLastOrder();
         Payment payment = paymentRepository.findByOrderNo(orderNo);
         payment.setStatus(PayStatus.PAY_CANCEL);
 
     }
 
-    public String getLastOrderNo() {
-        Optional<Payment> payment = paymentRepository.findTopByOrderByOrderNoDesc();
+    public String getLastOrder() {
+        Optional<Payment> payment = paymentRepository.findTopByOrderByCreatedTsDesc();
         return payment.map(Payment::getOrderNo).orElse(null); // 최신 orderNo 반환
     }
 

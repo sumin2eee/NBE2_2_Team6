@@ -33,7 +33,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PayType payType;
 
-    private String paidTs;  //결제 일시
+    private LocalDateTime paidTs;  //결제 일시
 
     private String orderNo; //나중에 예매이랑 연결되면 삭제 ?
 
@@ -44,6 +44,7 @@ public class Payment {
 
     private LocalDateTime refundDate; // 환불 요청 날짜
 
+    private LocalDateTime createdTs;
 //    @OneToOne //예매랑 연결되면 추가하기
 //    @JoinColumn(name = "reservation_id")
 //    private Reservation reservation;
