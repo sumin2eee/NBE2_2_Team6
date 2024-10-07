@@ -67,7 +67,7 @@ public class SeatService {
         List<SeatDto> seatDtoList = new ArrayList<>();
 
         //중복 생성 방지
-        if (seatRepository.existsByCinemaMovie_CinemaMovieId(seatRequest.getCinemaMovieId()).orElse(false)) {
+        if (seatRepository.existsByCinemaMovie_CinemaMovieIdAndCinema_cinemaId(seatRequest.getCinemaMovieId(), seatRequest.getCinemaId()).orElse(false)) {
             log.info("해당 상영정보의 좌석이 이미 생성되었습니다");
             return seatDtoList;
         }
