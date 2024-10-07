@@ -36,14 +36,21 @@ public class CinemaMovieDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalTime screenTime;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalTime showTime;
+
     private Movie movie;
 
-    public CinemaMovieDto(Long id, Movie movie, LocalDate screenDate, LocalTime screenTime,String title){
+    private Cinema cinema;
+
+    public CinemaMovieDto(Long id, Movie movie, LocalDate screenDate, LocalTime screenTime,LocalTime showTime,String title, Cinema cinema){
         this.cinemaMovieId = id;
         this.movie = movie;
         this.screenDate = screenDate;
         this.screenTime = screenTime;
+        this.showTime = showTime;
         this.title = title;
+        this.cinema = cinema;
     }
 
 
@@ -54,6 +61,7 @@ public class CinemaMovieDto {
         this.cinemaName = cinemaMovie.getCinema().getCinemaName();
         this.screenDate = cinemaMovie.getScreenDate();
         this.screenTime = cinemaMovie.getScreenTime();
+        this.showTime = cinemaMovie.getShowTime();
     }
 
     public CinemaMovie toEntity(Movie movie, Cinema cinema){
