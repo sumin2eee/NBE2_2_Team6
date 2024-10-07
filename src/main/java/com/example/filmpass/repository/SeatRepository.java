@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    Seat findBySeatRowAndSeatColAndCinemaCinemaId(int seatRow, int seatCol, Long cinemaId);
+//    Seat findBySeatRowAndSeatColAndCinemaCinemaId(int seatRow, int seatCol, Long cinemaId);
 
-    Optional<Boolean> existsByCinemaCinemaId(Long cinemaId);
+//    Optional<Boolean> existsByCinemaCinemaId(Long cinemaId);
 
-    List<Seat> findByCinemaCinemaId(Long cinemaId);
+    List<Seat> findByCinemaMovieCinemaMovieId(Long cinemaMovieId);
+
+    Optional<Boolean> existsByCinemaMovie_CinemaMovieId(Long cinemaMovieId);
+
+    Seat findBySeatRowAndSeatColAndCinemaMovieCinemaMovieId(int rows, int cols, Long cinemaMovieId);
 }

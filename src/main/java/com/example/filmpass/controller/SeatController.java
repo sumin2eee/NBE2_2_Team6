@@ -31,19 +31,26 @@ public class SeatController {
     }
 
     //좌석 조회
-    @GetMapping("/{cinemaId}")
-    public List<SeatDto> read(@PathVariable Long cinemaId) {
-        return seatService.read(cinemaId);
+    @GetMapping("/{cinemaMovieId}")
+    public List<SeatDto> read(@PathVariable Long cinemaMovieId) {
+        return seatService.read(cinemaMovieId);
     }
 
-    //좌석 예매
+    //좌석 선택
 //    {
-//        "cinemaId":1,
-//            "rows":5,
-//            "cols":1
+//        "cinemaMovieId":2,
+//            "rows":3,
+//            "cols":7
 //    }
     @PutMapping("/choice")
     public ResponseEntity<SeatDto> update(@RequestBody SeatRequest seatRequest) {
         return ResponseEntity.ok(seatService.reserveSeat(seatRequest));
     }
+
+//    @PutMapping("/cancel")
+//    public ResponseEntity<Seat> cancel(@RequestBody SeatRequest seatRequest) {
+//        Seat seat = seatRepository.findById(seatRequest.getCinemaMovieId()).orElseThrow();
+//        seat.setReserved(false);
+//        return ResponseEntity.ok(seatRepository.save(seat));
+//    }
 }
