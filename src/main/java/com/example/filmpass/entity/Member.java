@@ -1,6 +1,6 @@
 package com.example.filmpass.entity;
 
-import com.example.filmpass.payment.Payment;
+import com.example.filmpass.entity.Payment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,10 +43,6 @@ public class Member {
     @Column(name = "name")
     private String name; // 사용자 이름 추가
 
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> payments = new ArrayList<>(); // 결제 정보 리스트
 
     @Getter
     @Setter

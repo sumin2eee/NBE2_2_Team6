@@ -2,6 +2,7 @@ package com.example.filmpass.controller;
 
 import com.example.filmpass.dto.MemberLoginDto;
 import com.example.filmpass.dto.MemberSignupDto;
+import com.example.filmpass.dto.MemberUpdateDto; // 추가
 import com.example.filmpass.jwt.JwtUtil;
 import com.example.filmpass.service.MemberService;
 import jakarta.validation.Valid;
@@ -31,19 +32,20 @@ public class MemberController {
     private final JwtUtil jwtUtil;
 
     @PutMapping("/profile-image")
-    public ResponseEntity<String> updateProfileImage(@RequestBody Map<String, String> requestBody, HttpServletRequest request) {
+    public ResponseEntity<String> updateProfileImage(@RequestBody MemberUpdateDto memberUpdateDto, HttpServletRequest request) {
         // JWT에서 사용자 ID 추출
         String jwt = request.getHeader("Authorization").substring(7); // "Bearer " 부분 제거
         String username = jwtUtil.extractUsername(jwt); // 사용자 ID 추출
 
-        // 요청 바디에서 새로운 이미지 URL 가져오기
-        String newImage = requestBody.get("image");
+        // 새로운 이미지 URL 가져오기
+        String newImage = memberUpdateDto.getImage(); // DTO에서 가져옴
 
         // 프로필 이미지 업데이트
         memberService.updateProfileImage(username, newImage);
 
         return ResponseEntity.ok("Profile image updated successfully");
     }
+
     // 회원가입 POST 요청
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody MemberSignupDto memberSignupDto) {
@@ -62,7 +64,7 @@ public class MemberController {
             String jwtToken = tokens.get("accessToken");
             String refreshToken = tokens.get("refreshToken");
 
-            // JWT 액세스 토큰을 쿠키에 저장//이제 서버에 요청시 쿠키에 토큰 정보들이 자동으로 포함됨
+            // JWT 액세스 토큰을 쿠키에 저장
             Cookie jwtCookie = new Cookie("token", jwtToken);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setMaxAge(60 * 60 * 1);
@@ -77,8 +79,5 @@ public class MemberController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
-
     }
 }
-
-
