@@ -1,5 +1,6 @@
 package com.example.filmpass.entity;
 
+import com.example.filmpass.util.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,7 +32,8 @@ public class Payment {
 
     private Integer refundAmount;    // 환불된 금액 (부분 환불을 위해)
 
-    private String refundStatus;     // 환불 상태: REFUNDED, REFUND_FAILED 등
+    @Enumerated(EnumType.STRING) // Enum을 String으로 저장
+    private RefundStatus refundStatus;
 
     private LocalDateTime refundDate; // 환불 요청 날짜
 
