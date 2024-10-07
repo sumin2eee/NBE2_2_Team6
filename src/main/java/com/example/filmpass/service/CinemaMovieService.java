@@ -10,6 +10,7 @@ import com.example.filmpass.repository.CinemaRepository;
 import com.example.filmpass.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -32,6 +34,9 @@ public class CinemaMovieService {
     public List<CinemaMovieDto> registerCinema() {
         List<Movie> movies = movieRepository.findAll();
         List<CinemaMovieDto> moviesDto = new ArrayList<>();
+
+        Random random = new Random();
+
         for (Movie movie : movies) {
             int allminutes = Integer.parseInt(movie.getShowTm());
             int hour = allminutes / 60;
@@ -39,23 +44,39 @@ public class CinemaMovieService {
             LocalTime showtime = LocalTime.of(hour, min);
             if(cinemaMovieRepository.findByMovie_MovieId(movie.getMovieId()).isEmpty()){
                 for (int i = 0; i < 7; i++) {
+                    long cinemaId = random.nextInt(5)+1;
+
+                    Cinema cinema = cinemaRepository.findById(cinemaId).get();
                     CinemaMovie cinemaMovie = CinemaMovie.builder()
                             .movie(movie) // movie 객체 설정
                             .screenDate(LocalDate.from(LocalDateTime.now().plusDays(i))) // 오늘부터 i일 더한 날짜로 설정
                             .screenTime(showtime) // showtime은 상영 시간으로 설정
+                            .showTime(generateRandomTime())
+                            .cinema(cinema)
                             .build();
+
                     cinemaMovieRepository.save(cinemaMovie); // cinemaMovie 저장
                     CinemaMovieDto cinemaMovieDto = new CinemaMovieDto(
                             cinemaMovie.getCinemaMovieId(),
                             cinemaMovie.getMovie(),
                             cinemaMovie.getScreenDate(),
                             cinemaMovie.getScreenTime(),
-                            cinemaMovie.getMovie().getMovieName());
+                            cinemaMovie.getShowTime(),
+                            cinemaMovie.getMovie().getMovieName(),
+                            cinemaMovie.getCinema());
+
                     moviesDto.add(cinemaMovieDto);
                 }
             }
         }
         return moviesDto;
+    }
+
+    private LocalTime generateRandomTime() {
+        Random random = new Random();
+        int hour = random.nextInt(17)+7;
+        int min = random.nextInt(60);
+        return LocalTime.of(hour, min);
     }
 
 
