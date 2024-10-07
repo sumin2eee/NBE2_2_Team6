@@ -6,6 +6,7 @@ import com.example.filmpass.jwt.JwtUtil;
 import com.example.filmpass.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
+@Log4j2
 @RequestMapping("/member")
 public class MemberController {
 

@@ -46,11 +46,8 @@ dependencies {
 	// JUnit 5 의존성 추가
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 
-	// MapStruct 의존성 추가
-	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-
-	implementation 'org.json:json:20210307'
+	//json-simple 의존성
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 }
 

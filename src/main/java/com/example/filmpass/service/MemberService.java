@@ -4,6 +4,7 @@ import com.example.filmpass.dto.MemberSignupDto;
 import com.example.filmpass.entity.Member;
 import com.example.filmpass.jwt.JwtUtil; // JwtUtil 추가
 import com.example.filmpass.repository.MemberRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+@Log4j2
 @Service
 public class MemberService implements UserDetailsService {
 
