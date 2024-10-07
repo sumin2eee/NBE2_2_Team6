@@ -1,6 +1,7 @@
 package com.example.filmpass.controller;
 
 import com.example.filmpass.dto.PaymentDTO;
+import com.example.filmpass.dto.RefundDTO;
 import com.example.filmpass.entity.Payment;
 import com.example.filmpass.repository.PaymentRepository;
 import com.example.filmpass.service.PaymentService;
@@ -32,15 +33,15 @@ public class PaymentController {
     //결제 페이지
     //test JSON 예시
     // {
-    //    "orderNo": 값 넣기,
-    //	"productDesc": "테스트 상품",
-    //    "retUrl": "http:///localhost:8080/pay/return",
-    //     "retCancelUrl": "http://localhost:8080/pay/cancel"
-    //    "autoExecute": true,
-    //    "resultCallback": "",
-    //    "amount": 100,
-    //    "amountTaxFree": 0
-    //}
+    //  "orderNo": 12225,
+    //	"productDesc": "테스 상품",
+    //  "retUrl": "http://localhost:8080/pay/return",
+    //  "retCancelUrl": "http://localhost:8080/pay/cancel",
+    //  "autoExecute": true,
+    //  "resultCallback": "",
+    //  "amount": 200,
+    //  "amountTaxFree": 0
+    //  }
     @PostMapping("/payments")
     public ResponseEntity<String> payment(@RequestBody PaymentDTO paymentDTO){
         return paymentService.payment(paymentDTO);
@@ -53,7 +54,12 @@ public class PaymentController {
     }
 
     @GetMapping("/cancel")
-    public String canclePage(){
+    public String cancelPage() {
         return "결제 취소";
+    }
+
+    @PostMapping("/refunds")
+    public ResponseEntity<String> refund(@RequestBody RefundDTO refundDTO) {
+        return paymentService.refund(refundDTO);
     }
 }
