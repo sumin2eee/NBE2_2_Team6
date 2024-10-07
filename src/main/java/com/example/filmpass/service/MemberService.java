@@ -5,9 +5,6 @@ import com.example.filmpass.entity.Member;
 import com.example.filmpass.jwt.JwtUtil; // JwtUtil 추가
 import com.example.filmpass.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

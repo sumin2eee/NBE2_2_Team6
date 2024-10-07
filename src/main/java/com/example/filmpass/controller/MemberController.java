@@ -74,7 +74,7 @@ public class MemberController {
             refreshCookie.setHttpOnly(true);
             refreshCookie.setMaxAge(60 * 60 * 24 * 30);
             response.addCookie(refreshCookie);
-
+            log.info("JWT token: " + jwtToken);
             return ResponseEntity.ok("Login successful");
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
