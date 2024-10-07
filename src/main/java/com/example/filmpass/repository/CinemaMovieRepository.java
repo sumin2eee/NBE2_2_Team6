@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface CinemaMovieRepository extends JpaRepository<CinemaMovie, Long> {
     List<CinemaMovie> findByMovie_MovieId(Long movieId);
 
-    Optional<CinemaMovie> findByMovieMovieIdAndCinemaCinemaIdAndScreenDateAndScreenTime(Long movieId, Long cinemaId, LocalDate screenDate, LocalTime screenTime);
+//    Optional<CinemaMovie> findByMovieMovieIdAndCinemaCinemaIdAndScreenDateAndScreenTime(Long movieId, Long cinemaId, LocalDate screenDate, LocalTime screenTime);
 }

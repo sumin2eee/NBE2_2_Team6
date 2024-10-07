@@ -28,7 +28,7 @@ public class Reservation {
     @CreatedDate
     private LocalDateTime bookingDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seat_id")
     private Seat seat;
 

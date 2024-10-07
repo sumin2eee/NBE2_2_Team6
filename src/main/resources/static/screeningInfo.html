@@ -31,6 +31,7 @@
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
         .reserve-button:hover {
             background-color: #0056b3;
@@ -76,12 +77,42 @@
                 <p>상영관: ${screening.cinemaName}</p>
                 <p>상영 날짜: ${screening.screenDate}</p>
                 <p>상영 시간: ${screening.screenTime}</p>
-                <a href="seatSelection.html?cinemaMovieId=${screening.cinemaMovieId}" class="reserve-button">좌석 선택</a>`;
+                <button class="reserve-button" onclick="reserveSeats(${screening.cinemaId}, ${screening.cinemaMovieId})">좌석 선택</button>`;
                 screeningContainer.appendChild(screeningInfo);
             });
         } else {
             screeningContainer.innerHTML = '<p>상영 정보가 없습니다.</p>';
         }
+    }
+    function reserveSeats(cinemaId, cinemaMovieId) {
+        const requestBody = {
+            cinemaId: cinemaId,
+            cinemaMovieId: cinemaMovieId
+        };
+
+        fetch('http://localhost:8080/seat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('좌석 예약 중 오류가 발생했습니다.');
+                }
+                return response.json(); // 서버에서 응답을 JSON으로 변환
+            })
+            .then(data => {
+                // 서버 응답에 cinemaMovieId가 있으면 그 값을 사용
+                const redirectCinemaMovieId = data.cinemaMovieId || cinemaMovieId;
+                console.log('예약된 좌석:', data);
+                window.location.href = `seatSelection.html?cinemaMovieId=${redirectCinemaMovieId}`;
+            })
+            .catch(error => {
+                console.error('좌석 예약 중 오류 발생:', error);
+                alert(error.message); // 오류 메시지 출력
+            });
     }
 </script>
 
