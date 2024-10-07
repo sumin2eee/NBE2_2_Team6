@@ -13,7 +13,9 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     List<Seat> findByCinemaMovieCinemaMovieId(Long cinemaMovieId);
 
-    Optional<Boolean> existsByCinemaMovie_CinemaMovieId(Long cinemaMovieId);
+//    Optional<Boolean> existsByCinemaMovie_CinemaMovieId(Long cinemaMovieId);
 
     Seat findBySeatRowAndSeatColAndCinemaMovieCinemaMovieId(int rows, int cols, Long cinemaMovieId);
+
+    Optional<Boolean> existsByCinemaMovie_CinemaMovieIdAndCinema_cinemaId(Long cinemaMovieId, Long cinemaId);
 }

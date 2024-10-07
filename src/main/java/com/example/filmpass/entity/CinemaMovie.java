@@ -38,5 +38,7 @@ public class CinemaMovie {
 
     private LocalTime screenTime;
 
+    private LocalTime showTime;
+
 
 }

@@ -60,7 +60,8 @@
 </div>
 
 <div class="button-container">
-    <button class="back-button" onclick="window.location.href='seatSelection.html'">좌석 선택으로 돌아가기</button>
+    <button class="back-button" onclick="window.location.href='rankingMovie.html'">확인</button>
+    <button class="cancel-button" onclick="cancelReservation()">예매 취소</button>
 </div>
 
 <script>
@@ -92,6 +93,24 @@
             console.error(error);
             document.getElementById('reservationDetails').innerHTML = `<p>${error.message}</p>`;
         });
+
+    // 예매 취소 함수
+    function cancelReservation() {
+        fetch(`http://localhost:8080/reservation/${reservationId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('예매 취소에 실패했습니다.');
+                }
+                // 성공적으로 삭제된 후 랭킹 페이지로 이동
+                window.location.href = 'http://localhost:8080/rankingMovie.html';
+            })
+            .catch(error => {
+                console.error(error);
+                alert('예매 취소 중 문제가 발생했습니다.');
+            });
+    }
 </script>
 
 </body>

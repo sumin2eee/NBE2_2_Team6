@@ -61,4 +61,16 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         return new ReservationReadDto(reservation);
     }
+
+    public void remove(Long reservationId) {
+
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+
+        Seat seat = seatRepository.findById(reservation.getSeat().getSeatId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 좌석이 없습니다"));
+        seat.setReserved(false);
+        seatRepository.save(seat);
+
+        reservationRepository.delete(reservation);
+    }
 }
