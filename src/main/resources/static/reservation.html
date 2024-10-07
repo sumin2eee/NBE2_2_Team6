@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>좌석 예약</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .submit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>좌석 예약</h1>
+
+<div class="form-container">
+    <div class="seat-info">
+        <p>영화 상영 ID: <span id="cinemaMovieIdDisplay">1</span></p>
+        <p>좌석 ID: <span id="seatIdDisplay">10</span></p>
+    </div>
+
+    <form id="reservationForm">
+        <input type="hidden" id="cinemaMovieId" value="1"> <!-- 예시 값 -->
+
+        <!-- URL 파라미터에서 동적으로 좌석 ID 가져오기 -->
+        <input type="hidden" id="seatId"> <!-- 이 부분은 JavaScript로 설정 -->
+        <label>
+            <input type="radio" id="adult" name="ticketType" value="adult" required>
+            성인
+        </label>
+
+        <label>
+            <input type="radio" id="youth" name="ticketType" value="youth">
+            청소년
+        </label>
+
+        <label>
+            <input type="radio" id="child" name="ticketType" value="child">
+            어린이
+        </label>
+
+        <div class="button-container">
+            <button type="submit" class="submit-button">예매하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // URL 파라미터에서 cinemaMovieId와 seatId 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const cinemaMovieId = urlParams.get('cinemaMovieId');
+    const seatId = urlParams.get('seatId');
+
+    // HTML 요소에 값 설정
+    document.getElementById('cinemaMovieId').value = cinemaMovieId;
+    document.getElementById('seatId').value = seatId;
+    document.getElementById('cinemaMovieIdDisplay').textContent = cinemaMovieId;
+    document.getElementById('seatIdDisplay').textContent = seatId;
+
+    // 예약 폼 제출 이벤트 리스너
+    document.getElementById('reservationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 폼 제출 기본 동작 방지
+        const selectedTicketType = document.querySelector('input[name="ticketType"]:checked');
+        const requestBody = {
+            cinemaMovieId: cinemaMovieId,
+            seatId: seatId,
+            adult: selectedTicketType && selectedTicketType.value === 'adult' ? 1 : 0,
+            youth: selectedTicketType && selectedTicketType.value === 'youth' ? 1 : 0,
+            child: selectedTicketType && selectedTicketType.value === 'child' ? 1 : 0
+        };
+
+        fetch('http://localhost:8080/reservation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // JSON 응답을 가져옵니다.
+                } else {
+                    throw new Error('예약 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                }
+            })
+            .then(data => {
+                console.log(data); // 데이터를 콘솔에 출력하여 확인
+                if (data.reservationId) {
+                    // 예약 정보를 조회하기 위한 GET 요청
+                    return fetch(`http://localhost:8080/reservation/${data.reservationId}`);
+                } else {
+                    throw new Error('예약 ID가 없습니다.'); // 예약 ID가 없으면 오류 발생
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('예약 정보를 가져오는 데 실패했습니다.');
+                }
+                return response.json(); // 예약 정보 JSON 응답을 가져옵니다.
+            })
+            .then(reservationData => {
+                // reservationData를 사용하여 원하는 작업을 수행
+                console.log(reservationData); // 예약 정보를 콘솔에 출력
+                // reservationCheck.html로 이동할 때, reservationData를 URL에 전달하기
+                window.location.href = `reservationComplete.html?reservationId=${reservationData.reservationId}`;
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    });
+</script>
+
+</body>
+</html>

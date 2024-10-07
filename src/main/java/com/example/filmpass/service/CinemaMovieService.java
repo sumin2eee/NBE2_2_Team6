@@ -51,10 +51,12 @@ public class CinemaMovieService {
             infoDto.add(new CinemaMovieDto(movieId, cinemaMovie));
         }
 
+        if(cinemaMovieList.isEmpty()) {
+            throw new IllegalStateException("상영정보가 없습니다");
+        }
         CinemaMovie movieName = cinemaMovieList.get(0);
 
         return new MovieListDto(movieId, movieName, infoDto);
     }
-
 
 }

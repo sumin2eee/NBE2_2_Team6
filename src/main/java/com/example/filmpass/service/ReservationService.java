@@ -27,6 +27,7 @@ public class ReservationService {
 
     //예매 등록
     public ReservationDto create(ReservationDto reservationDto) {
+
         Seat seat = seatRepository.findById(reservationDto.getSeatId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 좌석이 없습니다"));
 
@@ -37,6 +38,15 @@ public class ReservationService {
 
         if(error.isPresent()) {
             throw new IllegalArgumentException("이미 등록된 좌석입니다");
+        }
+
+        if(!seat.isReserved()) {
+            seat.setReserved(true);
+            seatRepository.save(seat);
+        }else {
+            log.warn("Reserved Seat");
+            throw new IllegalStateException("이미 예매된 좌석");
+
         }
 
 

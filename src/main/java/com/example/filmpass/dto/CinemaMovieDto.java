@@ -4,6 +4,7 @@ import com.example.filmpass.entity.Cinema;
 import com.example.filmpass.entity.CinemaMovie;
 import com.example.filmpass.entity.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,24 +17,31 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CinemaMovieDto {
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long movieId;
 
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long cinemaId;
+
+    private Long cinemaMovieId;
 
     private String title;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String cinemaName;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate screenDate;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalTime screenTime;
 
 
 
     public CinemaMovieDto(Long id, CinemaMovie cinemaMovie) {
+        this.cinemaId = cinemaMovie.getCinema().getCinemaId();
         this.title = cinemaMovie.getMovie().getMovieName();
+        this.cinemaMovieId = cinemaMovie.getCinemaMovieId();
         this.cinemaName = cinemaMovie.getCinema().getCinemaName();
         this.screenDate = cinemaMovie.getScreenDate();
         this.screenTime = cinemaMovie.getScreenTime();

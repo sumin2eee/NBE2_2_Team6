@@ -31,8 +31,8 @@ public class CinemaMovie {
     @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
-//    @OneToMany(mappedBy = "cinemaMovie")
-//    private List<Seat> seat  = new ArrayList<>();
+    @OneToMany(mappedBy = "cinemaMovie")
+    private List<Seat> seat  = new ArrayList<>();
 
     private LocalDate screenDate;
 
