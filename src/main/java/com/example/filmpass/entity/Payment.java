@@ -18,7 +18,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long PaymentId;
 
-    private String status;
+    @Column(name = "paymentStatus")
+    @Enumerated(EnumType.STRING)
+    private PayStatus status;
 
     private Integer discount;
 

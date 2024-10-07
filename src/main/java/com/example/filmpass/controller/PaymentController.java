@@ -7,6 +7,7 @@ import com.example.filmpass.service.PaymentService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -49,13 +51,9 @@ public class PaymentController {
 
     //결제완료 후 돌아갈 페이지
     @GetMapping("/return")
-    public String returnPage(@RequestParam String status,
-                             @RequestParam String orderNo,
-                             @RequestParam String payMethod,
-                             @RequestParam String bankCode,
-                             HttpServletResponse response){
+    public String returnPage(@RequestParam String orderNo){
         //결제 정보 저장하는 메소드 호출
-        String apiKey = "노션 확인";
+        String apiKey = "sk_test_w5lNQylNqa5lNQe013Nq";
         paymentService.payComplete(orderNo, apiKey);
         return "결제 완료"; //나중에 예매 정보 등 추가
     }
@@ -63,6 +61,7 @@ public class PaymentController {
     //결제 취소 시 돌아갈 페이지
     @GetMapping("/cancel")
     public String canclePage(){
+        paymentService.payCancle();
         return "결제 취소";
     }
 }

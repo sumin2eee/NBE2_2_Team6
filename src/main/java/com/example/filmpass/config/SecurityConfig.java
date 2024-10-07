@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/member/signup", "/member/login","/dailyBoxOffice", "/dailyBoxOffice/{movieCd}","/pay/return","pay/cancel").permitAll() // 회원가입 및 로그인 허용   //나중에 수정
+                        .requestMatchers("/member/signup", "/member/login","/dailyBoxOffice", "/dailyBoxOffice/{movieCd}","/pay/return","/pay/cancel").permitAll() // 회원가입 및 로그인 허용   //나중에 수정
                         .anyRequest().authenticated() // 그 외 모든 요청 인증 필요
                 )
                 .sessionManagement(session -> session

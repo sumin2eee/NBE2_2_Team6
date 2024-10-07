@@ -1,11 +1,13 @@
 package com.example.filmpass.service;
 
 import com.example.filmpass.dto.PaymentDTO;
+import com.example.filmpass.entity.PayStatus;
 import com.example.filmpass.entity.PayType;
 import com.example.filmpass.entity.Payment;
 import com.example.filmpass.repository.PaymentRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.json.simple.JSONObject;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.io.BufferedOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Optional;
+
 @Service
 @Transactional
 @Log4j2
@@ -48,7 +53,7 @@ public class PaymentService {
             jsonBody.put("amount", paymentDTO.getAmount());
             jsonBody.put("amountTaxFree", paymentDTO.getAmountTaxFree());
             jsonBody.put("productDesc", paymentDTO.getProductDesc());
-            jsonBody.put("apiKey", "노션 확인");
+            jsonBody.put("apiKey", "sk_test_w5lNQylNqa5lNQe013Nq");
             jsonBody.put("autoExecute", true);
             jsonBody.put("resultCallback", paymentDTO.getResultCallback());
             jsonBody.put("retUrl", "http://localhost:8080/pay/return");
@@ -78,7 +83,7 @@ public class PaymentService {
             payment.setPayToken(token);
 
             //결제 완료 전이므로 PAY_STANDBY로 상태 설정
-            payment.setStatus("PAY_STANDBY");
+            payment.setStatus(PayStatus.PAY_STANDBY);
 
             payment.setOrderNo(paymentDTO.getOrderNo());
 
@@ -131,11 +136,9 @@ public class PaymentService {
 
             //<--- 응답받은 정보는 필요한 정보 파싱해서 entity에 저장
             JsonNode jsonNode2 = objectMapper.readTree(responseBody.toString());
-            String status = jsonNode2.get("payStatus").asText();
-            String payMethod = jsonNode2.get("payMethod").asText();
             String paidTs = jsonNode2.get("paidTs").asText();
             Payment payment = paymentRepository.findByOrderNo(orderNo);
-            payment.setStatus(status);
+            payment.setStatus(PayStatus.PAY_COMPLETE);
             payment.setPaidTs(paidTs);
 
             //결제 정보가 TOSS_MOENY면 현금 , CARD면 카드
@@ -156,6 +159,19 @@ public class PaymentService {
             responseBody.append(e);
         }
         System.out.println(responseBody.toString());
+    }
+
+    //결제 취소 메서드 - 상태 결제 취소로 바뀌도록
+    public void payCancle() {
+        String orderNo = getLastOrderNo();
+        Payment payment = paymentRepository.findByOrderNo(orderNo);
+        payment.setStatus(PayStatus.PAY_CANCEL);
+
+    }
+
+    public String getLastOrderNo() {
+        Optional<Payment> payment = paymentRepository.findTopByOrderByOrderNoDesc();
+        return payment.map(Payment::getOrderNo).orElse(null); // 최신 orderNo 반환
     }
 }
 
