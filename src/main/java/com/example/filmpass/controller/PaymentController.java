@@ -6,6 +6,7 @@ import com.example.filmpass.repository.PaymentRepository;
 import com.example.filmpass.service.PaymentService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,24 +35,32 @@ public class PaymentController {
     // {
     //    "orderNo": 값 넣기,
     //	"productDesc": "테스트 상품",
-    //    "retUrl": "http:///localhost:8080/pay/return",
-    //     "retCancelUrl": "http://localhost:8080/pay/cancel"
     //    "autoExecute": true,
     //    "resultCallback": "",
     //    "amount": 100,
     //    "amountTaxFree": 0
     //}
+
+    //결제 요청 페이지
     @PostMapping("/payments")
     public ResponseEntity<String> payment(@RequestBody PaymentDTO paymentDTO){
         return paymentService.payment(paymentDTO);
-
 }
+
     //결제완료 후 돌아갈 페이지
     @GetMapping("/return")
-    public String returnPage(){
-        return "결제 완료";   //나중에 예매 정보하고 추가
+    public String returnPage(@RequestParam String status,
+                             @RequestParam String orderNo,
+                             @RequestParam String payMethod,
+                             @RequestParam String bankCode,
+                             HttpServletResponse response){
+        //결제 정보 저장하는 메소드 호출
+        String apiKey = "노션 확인";
+        paymentService.payComplete(orderNo, apiKey);
+        return "결제 완료"; //나중에 예매 정보 등 추가
     }
 
+    //결제 취소 시 돌아갈 페이지
     @GetMapping("/cancel")
     public String canclePage(){
         return "결제 취소";

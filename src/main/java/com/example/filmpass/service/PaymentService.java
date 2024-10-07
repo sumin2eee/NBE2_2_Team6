@@ -1,6 +1,7 @@
 package com.example.filmpass.service;
 
 import com.example.filmpass.dto.PaymentDTO;
+import com.example.filmpass.entity.PayType;
 import com.example.filmpass.entity.Payment;
 import com.example.filmpass.repository.PaymentRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,27 +31,89 @@ public class PaymentService {
     private ObjectMapper objectMapper;
     private final PaymentRepository paymentRepository;
 
+    //결제 요청 메서드 - 결제 요청하는 토스 API이용
     public ResponseEntity<String> payment(PaymentDTO paymentDTO) {
         URL url = null;
         StringBuilder responseBody = new StringBuilder();
         try {
-            //토스 API 사용
             url = new URL("https://pay.toss.im/api/v2/payments");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.addRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
             connection.setDoInput(true);
 
+            //API 사용할 때 필요한 정보 넘겨주기
             org.json.simple.JSONObject jsonBody = new JSONObject();
             jsonBody.put("orderNo", paymentDTO.getOrderNo());   //여기 나중에 예매 번호 넣기
             jsonBody.put("amount", paymentDTO.getAmount());
             jsonBody.put("amountTaxFree", paymentDTO.getAmountTaxFree());
             jsonBody.put("productDesc", paymentDTO.getProductDesc());
-            jsonBody.put("apiKey", "노션에 올려둔 키");
+            jsonBody.put("apiKey", "노션 확인");
             jsonBody.put("autoExecute", true);
             jsonBody.put("resultCallback", paymentDTO.getResultCallback());
-            jsonBody.put("retUrl", paymentDTO.getRetUrl());
-            jsonBody.put("retCancelUrl", paymentDTO.getRetCancelUrl());
+            jsonBody.put("retUrl", "http://localhost:8080/pay/return");
+            jsonBody.put("retCancelUrl", "http://localhost:8080/pay/cancel");
+
+            BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream());
+
+            bos.write(jsonBody.toJSONString().getBytes(StandardCharsets.UTF_8));
+            bos.flush();
+            bos.close();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                responseBody.append(line);
+            }
+            log.info(responseBody);
+            br.close();
+
+            //<---- DB에 저장하기 위해 entity에 넣기
+
+            Payment payment = new Payment();
+            payment.setAmount(paymentDTO.getAmount());
+            // JSON 파싱: 요청 후 응답으로 받은 payToken 가져오기
+            JsonNode jsonNode = objectMapper.readTree(responseBody.toString());
+            String token = jsonNode.get("payToken").asText();
+            payment.setPayToken(token);
+
+            //결제 완료 전이므로 PAY_STANDBY로 상태 설정
+            payment.setStatus("PAY_STANDBY");
+
+            payment.setOrderNo(paymentDTO.getOrderNo());
+
+
+            //---->
+
+            //Payment DB에 저장
+            paymentRepository.save(payment);
+
+            //사용자에게 결제 진행할 수 있는 URL 돌려주기
+            String checkoutPage = jsonNode.get("checkoutPage").asText();
+            return ResponseEntity.ok(checkoutPage);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()); // 오류 메시지 반환
+        }
+
+    }
+
+    //결제 정보 저장 메소드 - 결제 정보 불러오는 토스 API이용
+    public void payComplete(String orderNo, String apiKey) {
+
+        URL url = null;
+        URLConnection connection = null;
+        StringBuilder responseBody = new StringBuilder();
+        try {
+            url = new URL("https://pay.toss.im/api/v2/status");
+            connection = url.openConnection();
+            connection.addRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+            //API 사용할 때 필요한 정보 넘겨주기
+            org.json.simple.JSONObject jsonBody = new JSONObject();
+            jsonBody.put("orderNo", orderNo);
+            jsonBody.put("apiKey", apiKey);
 
             BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream());
 
@@ -64,25 +127,35 @@ public class PaymentService {
             while ((line = br.readLine()) != null) {
                 responseBody.append(line);
             }
-            log.info(responseBody);
             br.close();
 
-            Payment payment = new Payment();
-            payment.setAmount(paymentDTO.getAmount());
-            // JSON 파싱: payToken 가져오기
-            JsonNode jsonNode = objectMapper.readTree(responseBody.toString());
-            String token = jsonNode.get("payToken").asText(); // token 필드만 가져옴
-            payment.setPayToken(token);
+            //<--- 응답받은 정보는 필요한 정보 파싱해서 entity에 저장
+            JsonNode jsonNode2 = objectMapper.readTree(responseBody.toString());
+            String status = jsonNode2.get("payStatus").asText();
+            String payMethod = jsonNode2.get("payMethod").asText();
+            String paidTs = jsonNode2.get("paidTs").asText();
+            Payment payment = paymentRepository.findByOrderNo(orderNo);
+            payment.setStatus(status);
+            payment.setPaidTs(paidTs);
+
+            //결제 정보가 TOSS_MOENY면 현금 , CARD면 카드
+            if (jsonNode2.get("payMethod").asText() == "TOSS_MONEY"){
+                PayType payType = PayType.CASH;
+                payment.setPayType(payType);
+            }else {
+                PayType payType = PayType.CARD;
+                payment.setPayType(payType);
+            }
+            //---->
+
             //Payment DB에 저장
             paymentRepository.save(payment);
 
-            //사용자에게 결제 진행할 수 있는 URL 돌려주기
-            String checkoutPage = jsonNode.get("checkoutPage").asText();
-            return ResponseEntity.ok(checkoutPage); // 결과 반환
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()); // 오류 메시지 반환
-        }
 
+        } catch (Exception e) {
+            responseBody.append(e);
+        }
+        System.out.println(responseBody.toString());
     }
 }
 

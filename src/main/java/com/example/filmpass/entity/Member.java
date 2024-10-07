@@ -1,5 +1,6 @@
 package com.example.filmpass.entity;
 
+import com.example.filmpass.entity.Payment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -39,7 +40,12 @@ public class Member {
 
     private String refreshToken; // 재생성 토큰
 
-    /*@JsonIgnore
-    @OneToMany(mappedBy = "member")
-    private List<Reservation> orders = new ArrayList<>();*/
+    @Column(name = "name")
+    private String name; // 사용자 이름 추가
+
+
+    @Getter
+    @Setter
+    private Long point; // 포인트 필드 추가
+
 }

@@ -62,21 +62,46 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
+    // 멤버 찾기
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+    public void updateMemberCache(Member member) {
+        // 캐시를 업데이트하는 로직
+    }
+
     // 로그인
-    public Map<String, String> login(String username, String password) {
+    public Map<String, String> login(String id, String password) {
         // 사용자 인증 기능
-        UserDetails userDetails = loadUserByUsername(username);
+        UserDetails userDetails = loadUserByUsername(id);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
-            String token = jwtUtil.generateToken(username);
-            String refreshToken = jwtUtil.generateRefreshToken(username);
+            String token = jwtUtil.generateToken(id);
+            String refreshToken = jwtUtil.generateRefreshToken(id);
+
+            // 리프레시 토큰을 DB에 저장
+            Member member = memberRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            member.setRefreshToken(refreshToken); // 리프레시 토큰 설정
+            memberRepository.save(member); // DB에 업데이트
+
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", token);
             tokens.put("refreshToken", refreshToken);
             return tokens;
         } else {
-            throw new RuntimeException("Login faileddddd");
+            throw new RuntimeException("Login faileddd");
         }
     }
+
+    //이미지 업뎃
+    public void updateProfileImage(String id, String newImage) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        member.setImage(newImage); // 새로운 이미지로 업데이트
+        memberRepository.save(member); // 변경 사항 저장
+    }
+
 
 
 }
