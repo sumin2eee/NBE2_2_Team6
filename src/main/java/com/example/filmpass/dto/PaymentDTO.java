@@ -12,7 +12,7 @@ import lombok.extern.log4j.Log4j2;
 @Builder
 @Log4j2
 public class PaymentDTO {
-    private String orderNo;     //주문번호
+    private Long ReserveId;     //예매번호
     private String apiKey;      //가맹점 Key
     private String productDesc;     //상품 설명
     private String retUrl;      //구매자 인증 완료 후 연결할 웹페이지
