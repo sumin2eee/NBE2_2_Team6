@@ -23,8 +23,6 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PayStatus status;
 
-    private Integer discount;
-
     private Integer amount;
 
     private String payToken;        //토스 결제하면 생성되는 토큰
@@ -34,8 +32,6 @@ public class Payment {
     private PayType payType;
 
     private LocalDateTime paidTs;  //결제 일시
-
-    private String orderNo; //나중에 예매이랑 연결되면 삭제 ?
 
     private Integer refundAmount = 0;    // 환불된 금액 (부분 환불을 위해)
 
@@ -51,7 +47,8 @@ public class Payment {
 
 
     private LocalDateTime createdTs;
-//    @OneToOne //예매랑 연결되면 추가하기
-//    @JoinColumn(name = "reservation_id")
-//    private Reservation reservation;
+
+    @OneToOne //예매랑 연결되면 추가하기
+    @JoinColumn(name = "reserve_id")
+    private Reservation reservation;
 }

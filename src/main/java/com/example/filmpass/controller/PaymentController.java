@@ -19,11 +19,10 @@ public class PaymentController {
     //결제 페이지
     //test JSON 예시
     // {
-    //  "orderNo": "값 넣기",
+    //  "reserveId": 예매 테이블에 있는 값 넣기
     //	"productDesc": "테스트 상품",
     //  "autoExecute": true,
     //  "resultCallback": "",
-    //  "amount": 200,
     //  "amountTaxFree": 0
     //  }
     @PostMapping("/payments")
@@ -33,10 +32,10 @@ public class PaymentController {
 
     //결제완료 후 돌아갈 페이지
     @GetMapping("/return")
-    public String returnPage(@RequestParam String orderNo){
+    public String returnPage(@RequestParam("orderNo") String reserveId){
         //결제 정보 저장하는 메소드 호출
         String apiKey = "sk_test_w5lNQylNqa5lNQe013Nq";
-        paymentService.payComplete(orderNo, apiKey);
+        paymentService.payComplete(reserveId, apiKey);
         return "결제 완료"; //나중에 예매 정보 등 추가
     }
 
@@ -45,6 +44,14 @@ public class PaymentController {
         paymentService.payCancle();
         return "결제 취소";
     }
+
+//
+//    {
+//        "reserveId": 환불하고 싶은 예매번호 넣기,
+//            "amount": 200(예시),      // 환불할 금액
+//            "payToken": "db에서 확인하시고 넣으시면 됩니다" // 결제 시 받은 payToken
+//    }
+
 
     @PostMapping("/refunds")
     public ResponseEntity<String> refund(@RequestBody RefundDTO refundDTO) {
