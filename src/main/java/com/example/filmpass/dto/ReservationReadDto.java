@@ -23,7 +23,7 @@ public class ReservationReadDto {
     private int youth;
 
     public ReservationReadDto(Reservation reservation) {
-        this.userId = reservation.getMemberId();
+        this.userId = reservation.getMember().getMemberId();
         this.reservationDate = reservation.getBookingDate();
         this.seatId = reservation.getSeat().getSeatId();
         this.cinemaMovieName = reservation.getCinemaMovie().getMovie().getMovieName();

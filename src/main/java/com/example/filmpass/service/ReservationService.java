@@ -3,9 +3,11 @@ package com.example.filmpass.service;
 import com.example.filmpass.dto.ReservationDto;
 import com.example.filmpass.dto.ReservationReadDto;
 import com.example.filmpass.entity.CinemaMovie;
+import com.example.filmpass.entity.Member;
 import com.example.filmpass.entity.Reservation;
 import com.example.filmpass.entity.Seat;
 import com.example.filmpass.repository.CinemaMovieRepository;
+import com.example.filmpass.repository.MemberRepository;
 import com.example.filmpass.repository.ReservationRepository;
 import com.example.filmpass.repository.SeatRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +26,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final CinemaMovieRepository cinemaMovieRepository;
+    private final MemberRepository memberRepository;
 
     //예매 등록
     public ReservationDto create(ReservationDto reservationDto) {
@@ -33,6 +36,9 @@ public class ReservationService {
 
         CinemaMovie cinemaMovie = cinemaMovieRepository.findById(reservationDto.getCinemaMovieId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 영화가 없습니다"));
+
+        Member member = memberRepository.findById(reservationDto.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 회원이 없습니다"));
 
         Optional<Reservation> error = reservationRepository.findBySeatSeatId(seat.getSeatId());
 
@@ -50,7 +56,7 @@ public class ReservationService {
         }
 
 
-        Reservation reservation = reservationDto.toEntity(seat,cinemaMovie);
+        Reservation reservation = reservationDto.toEntity(seat,cinemaMovie,member);
         reservationRepository.save(reservation);
 
         return new ReservationDto(reservation);
