@@ -14,8 +14,8 @@ import java.util.List;
 @Table(name = "movie")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교해서 수정하기
@@ -32,7 +32,7 @@ public class Movie {    //영화 상세 정보 API에 있는 내용들과 비교
 
     private String directorName;
 
-    private AgeRatingEnum ageRating;    //관람등급
+    private String ageRating;    //관람등급
 
     private double movieRating;
 

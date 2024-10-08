@@ -30,6 +30,7 @@ public class MovieController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             String targetDate = yesterday.format(formatter);
 
+
             // MovieService를 호출하여 일일 박스오피스 정보를 가져옴
             List<DailyBoxOfficeDto> dailyBoxOfficeList = movieService.getDailyBoxOffice(apiKey, targetDate);
 
