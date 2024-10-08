@@ -79,6 +79,20 @@
 </div>
 
 <script>
+    function getJwtFromCookie() {
+        const name = "jwt=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookies = decodedCookie.split(';');
+
+        for (let i = 0; i < cookies.length; i++) {
+            let c = cookies[i].trim();
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
     // URL 파라미터에서 cinemaMovieId와 seatId 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const cinemaMovieId = urlParams.get('cinemaMovieId');
@@ -90,11 +104,24 @@
     document.getElementById('cinemaMovieIdDisplay').textContent = cinemaMovieId;
     document.getElementById('seatIdDisplay').textContent = seatId;
 
-    // 예약 폼 제출 이벤트 리스너
     document.getElementById('reservationForm').addEventListener('submit', function(event) {
         event.preventDefault(); // 폼 제출 기본 동작 방지
         const selectedTicketType = document.querySelector('input[name="ticketType"]:checked');
+
+        // userId를 하드코딩
+        const userId = 1; // 여기서 1은 예시로 사용된 사용자 ID입니다. 필요에 따라 수정하세요.
+        const jwt = getJwtFromCookie(); // 쿠키에서 JWT 가져오기
+
+        // JWT가 없으면 로그인 페이지로 리다이렉트
+        if (!jwt) {
+            alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+            const currentUrl = window.location.href;
+            window.location.href = `login.html?returnUrl=${encodeURIComponent(currentUrl)}`; // 로그인 페이지로 이동
+            return; // 함수 종료
+        }
+
         const requestBody = {
+            userId: userId,
             cinemaMovieId: cinemaMovieId,
             seatId: seatId,
             adult: selectedTicketType && selectedTicketType.value === 'adult' ? 1 : 0,
@@ -105,7 +132,8 @@
         fetch('http://localhost:8080/reservation', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
             },
             body: JSON.stringify(requestBody)
         })
@@ -120,7 +148,11 @@
                 console.log(data); // 데이터를 콘솔에 출력하여 확인
                 if (data.reservationId) {
                     // 예약 정보를 조회하기 위한 GET 요청
-                    return fetch(`http://localhost:8080/reservation/${data.reservationId}`);
+                    return fetch(`http://localhost:8080/reservation/${data.reservationId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${jwt}`
+                        }
+                    });
                 } else {
                     throw new Error('예약 ID가 없습니다.'); // 예약 ID가 없으면 오류 발생
                 }
