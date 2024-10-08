@@ -1,6 +1,7 @@
 package com.example.filmpass.dto;
 
 import com.example.filmpass.entity.CinemaMovie;
+import com.example.filmpass.entity.Member;
 import com.example.filmpass.entity.Reservation;
 import com.example.filmpass.entity.Seat;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class ReservationDto {
 
     public ReservationDto(Reservation reservation) {
         this.reservationId = reservation.getReserveId();
-        this.userId = reservation.getMemberId();
+        this.userId = reservation.getMember().getMemberId();
         this.reservationDate = reservation.getBookingDate();
         this.seatId = reservation.getSeat().getSeatId();
 //        this.cinemaMovieId = reservation.getCinemaMovie().getCinemaMovieId();
@@ -35,11 +36,11 @@ public class ReservationDto {
         this.youth=reservation.getYouth();
     }
 
-    public Reservation toEntity(Seat seat, CinemaMovie cinemaMovie) {
+    public Reservation toEntity(Seat seat, CinemaMovie cinemaMovie, Member member) {
 
         return Reservation.builder()
                 .reserveId(reservationId)
-                .memberId(userId)
+                .member(member)
                 .seat(seat)
                 .cinemaMovie(cinemaMovie)
                 .bookingDate(LocalDateTime.now())
