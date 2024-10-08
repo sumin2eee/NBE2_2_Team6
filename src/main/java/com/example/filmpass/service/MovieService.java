@@ -210,14 +210,7 @@ public class MovieService {
 
 
     public Movie getMovieInfo(String movieCd) {
-        Movie movie = movieRepository.findByMovieCd(movieCd);
-        return movie;
+         Movie movie = movieRepository.findByMovieCd(movieCd);
+         return movie;
     }
-
-
 }
-
-
-
-
-
