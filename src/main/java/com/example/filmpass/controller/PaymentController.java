@@ -48,8 +48,7 @@ public class PaymentController {
 //
 //    {
 //        "reserveId": 환불하고 싶은 예매번호 넣기,
-//            "amount": 200(예시),      // 환불할 금액
-//            "payToken": "db에서 확인하시고 넣으시면 됩니다" // 결제 시 받은 payToken
+//            "amount": 200(예시)     // 환불할 금액
 //    }
 
 

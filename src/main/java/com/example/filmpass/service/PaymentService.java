@@ -251,6 +251,9 @@ public class PaymentService {
 
             // 환불 금액 초과 여부 확인
             if (refundDTO.getAmount() > availableRefundAmount) {
+                // 상태를 FAILED로 업데이트(금액이 문제인 경우, 사용자 요청이 문제인 경우임)
+                payment.setRefundStatus(RefundStatus.FAILED);
+                paymentRepository.save(payment);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("환불 금액이 환불 가능한 금액을 초과합니다.");
             }
 
@@ -309,6 +312,10 @@ public class PaymentService {
 
                 return ResponseEntity.ok(combinedResponse); // 환불 성공 응답 반환
             } else {
+                // 환불 실패 시 상태를 FAILED로 업데이트(서버, api가 문제인 경우, 요청 자체는 유효함)
+                payment.setRefundStatus(RefundStatus.FAILED);
+                paymentRepository.save(payment);
+
                 return ResponseEntity.status(responseCode).body(responseBody.toString());
             }
 
