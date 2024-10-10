@@ -13,15 +13,14 @@ import java.util.function.Function;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 
-
 @Component
 public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    // JWT에서 사용자 이름 추출
-    public String extractUsername(String token) {
+    // JWT에서 사용자 ID 추출
+    public String extractId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -51,7 +50,7 @@ public class JwtUtil {
     }
 
     // 엑세스 토큰 생성
-    public String generateToken(String username) {
+    public String generateToken(String id) {
         long currentTimeMillis = System.currentTimeMillis();
 
         // 현재 시간을 KST 기준으로 출력
@@ -60,14 +59,13 @@ public class JwtUtil {
         System.out.println("JWT 만료 시간 (KST): " + nowKST.plusHours(1)); // 만료 시간을 1시간 후로 출력
 
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, 1, false); // 1시간 동안 유효한 액세스 토큰
+        return createToken(claims, id, 1, false); // 1시간 동안 유효한 액세스 토큰
     }
 
-
     // 리프레시 토큰 생성 (30일 유효)
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(String id) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, 30, true);
+        return createToken(claims, id, 30, true);
     }
 
     // JWT 생성 메서드
@@ -90,8 +88,9 @@ public class JwtUtil {
     }
 
     // JWT 유효성 검사
-    public Boolean validateToken(String token, String username) {
-        final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    public Boolean validateToken(String token, String id) {
+        final String extractedId = extractId(token);
+        return (extractedId.equals(id) && !isTokenExpired(token));
     }
 }
+

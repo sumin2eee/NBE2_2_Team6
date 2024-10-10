@@ -3,6 +3,7 @@ package com.example.filmpass.controller;
 import com.example.filmpass.dto.MemberLoginDto;
 import com.example.filmpass.dto.MemberSignupDto;
 import com.example.filmpass.dto.MemberUpdateDto; // 추가
+import com.example.filmpass.entity.Member;
 import com.example.filmpass.jwt.JwtUtil;
 import com.example.filmpass.service.MemberService;
 import jakarta.validation.Valid;
@@ -32,17 +33,18 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+
     @PutMapping("/profile-image")
     public ResponseEntity<String> updateProfileImage(@RequestBody MemberUpdateDto memberUpdateDto, HttpServletRequest request) {
         // JWT에서 사용자 ID 추출
         String jwt = request.getHeader("Authorization").substring(7); // "Bearer " 부분 제거
-        String username = jwtUtil.extractUsername(jwt); // 사용자 ID 추출
+        String id = jwtUtil.extractId(jwt); // 사용자 ID 추출
 
         // 새로운 이미지 URL 가져오기
         String newImage = memberUpdateDto.getImage(); // DTO에서 가져옴
 
         // 프로필 이미지 업데이트
-        memberService.updateProfileImage(username, newImage);
+        memberService.updateProfileImage(id, newImage);
 
         return ResponseEntity.ok("Profile image updated successfully");
     }
@@ -55,8 +57,9 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
+    public ResponseEntity<String> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
         // 로그인 post 요청
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(memberLoginDto.getId(), memberLoginDto.getPassword()));
@@ -76,14 +79,38 @@ public class MemberController {
             refreshCookie.setMaxAge(60 * 60 * 24 * 30);
             response.addCookie(refreshCookie);
             log.info("JWT token: " + jwtToken);
-            Map<String, String> responseBody = new HashMap<>();
-            responseBody.put("message", "Login successful");
-            responseBody.put("jwt", jwtToken);  // JWT 추가
-            responseBody.put("userId", memberLoginDto.getId());
 
-            return ResponseEntity.ok(responseBody);
+            return ResponseEntity.ok("Login successful");
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인 실패"));
+            log.error("Authentication failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
     }
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
+        // 리프레시 토큰이 유효한지 확인
+        String id = jwtUtil.extractId(refreshToken); // 토큰에서 사용자 ID 추출
+        Member member = memberService.findById(id); // DB에서 멤버 조회
+
+        // DB에 저장된 리프레시 토큰과 비교
+        if (!member.getRefreshToken().equals(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
+        if (jwtUtil.validateToken(refreshToken, member.getId())) {
+            String newAccessToken = jwtUtil.generateToken(member.getId());
+
+            // 새 액세스 토큰을 쿠키에 저장
+            Cookie newJwtCookie = new Cookie("token", newAccessToken);
+            newJwtCookie.setHttpOnly(true);
+            newJwtCookie.setMaxAge(60 * 60 * 1); // 1시간 유효
+            response.addCookie(newJwtCookie);
+
+            return ResponseEntity.ok("New access token generated");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+    }
+
 }

@@ -2,7 +2,7 @@ package com.example.filmpass.service;
 
 import com.example.filmpass.dto.MemberSignupDto;
 import com.example.filmpass.entity.Member;
-import com.example.filmpass.jwt.JwtUtil; // JwtUtil 추가
+import com.example.filmpass.jwt.JwtUtil;
 import com.example.filmpass.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,28 +14,30 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 @Log4j2
 @Service
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil; // JwtUtil 추가
-
+    private final JwtUtil jwtUtil;
 
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        // 초기화
     }
-    //사용자 정보 가져오기
+
+    // 사용자 정보 가져오기
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(member.getId(), member.getPassword(), new ArrayList<>());
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return new org.springframework.security.core.userdetails.User(member.getId().toString(), member.getPassword(), new ArrayList<>());
     }
-    //회원가입
+
+    // 회원가입
     public void signup(MemberSignupDto memberSignupDto) {
         Member member = new Member();
         member.setPassword(passwordEncoder.encode(memberSignupDto.getPassword()));
@@ -59,11 +61,12 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-    // 멤버 찾기
-    public Member findMember(Long memberId) {
+    // ID로 멤버 찾기
+    public Member findById(String memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
     }
+
     public void updateMemberCache(Member member) {
         // 캐시를 업데이트하는 로직
     }
@@ -77,7 +80,8 @@ public class MemberService implements UserDetailsService {
             String refreshToken = jwtUtil.generateRefreshToken(id);
 
             // 리프레시 토큰을 DB에 저장
-            Member member = memberRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            Member member = memberRepository.findById(id)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             member.setRefreshToken(refreshToken); // 리프레시 토큰 설정
             memberRepository.save(member); // DB에 업데이트
 
@@ -86,11 +90,11 @@ public class MemberService implements UserDetailsService {
             tokens.put("refreshToken", refreshToken);
             return tokens;
         } else {
-            throw new RuntimeException("Login faileddd");
+            throw new RuntimeException("Login failed");
         }
     }
 
-    //이미지 업뎃
+    // 이미지 업데이트
     public void updateProfileImage(String id, String newImage) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -98,7 +102,4 @@ public class MemberService implements UserDetailsService {
         member.setImage(newImage); // 새로운 이미지로 업데이트
         memberRepository.save(member); // 변경 사항 저장
     }
-
-
-
 }
