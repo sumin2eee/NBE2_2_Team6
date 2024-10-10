@@ -85,11 +85,11 @@ public class PaymentService {
                 } else {
                     jsonBody.put("amount", "5000");
                 }
-                jsonBody.put("amountTaxFree", paymentDTO.getAmountTaxFree());
-                jsonBody.put("productDesc", paymentDTO.getProductDesc());
+                jsonBody.put("amountTaxFree", "0");
+                jsonBody.put("productDesc", "영화 예매");
                 jsonBody.put("apiKey", "sk_test_w5lNQylNqa5lNQe013Nq");
                 jsonBody.put("autoExecute", true);
-                jsonBody.put("resultCallback", paymentDTO.getResultCallback());
+                jsonBody.put("resultCallback", "0");
                 jsonBody.put("retUrl", "http://localhost:8080/pay/return");
                 jsonBody.put("retCancelUrl", "http://localhost:8080/pay/cancel");
 
