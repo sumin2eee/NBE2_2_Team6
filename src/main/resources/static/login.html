@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .submit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>로그인</h1>
+
+<div class="form-container">
+    <form id="loginForm">
+        <div>
+            <label for="id">아이디:</label>
+            <input type="text" id="id" required>
+        </div>
+        <div>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" required>
+        </div>
+        <div class="button-container">
+            <button type="submit" class="submit-button">로그인</button>
+        </div>
+        <div id="errorMessage" class="error-message"></div> <!-- 에러 메시지를 표시할 요소 -->
+    </form>
+</div>
+
+<script>
+    // 로그인 폼 제출 이벤트 리스너
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 폼 제출 기본 동작 방지
+
+        const userId = document.getElementById('id').value; // 사용자 아이디
+        const password = document.getElementById('password').value; // 비밀번호
+
+        const requestBody = {
+            id: userId,
+            password: password
+        };
+
+        fetch('http://localhost:8080/member/login', { // 로그인 API URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // JSON 응답을 가져옵니다.
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || '로그인에 실패했습니다. 다시 시도해 주세요.');
+                    });
+                }
+            })
+            .then(data => {
+                console.log(data); // 데이터를 콘솔에 출력하여 확인
+                document.cookie = `jwt=${data.jwt}; path=/`; // JWT를 쿠키에 저장
+
+                // 로그인 성공 후 예약 페이지로 이동할 때 쿼리 파라미터로 추가
+                const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+                if (returnUrl) {
+                    window.location.href = returnUrl; // 예약 페이지로 이동
+                } else {
+                    window.location.href = 'index.html'; // 기본 페이지로 이동
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('errorMessage').textContent = error.message; // 에러 메시지를 표시
+            });
+    });
+</script>
+
+</body>
+</html>

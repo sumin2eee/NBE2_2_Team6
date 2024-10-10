@@ -19,6 +19,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
         // 로그인 post 요청
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -75,9 +76,14 @@ public class MemberController {
             refreshCookie.setMaxAge(60 * 60 * 24 * 30);
             response.addCookie(refreshCookie);
             log.info("JWT token: " + jwtToken);
-            return ResponseEntity.ok("Login successful");
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("message", "Login successful");
+            responseBody.put("jwt", jwtToken);  // JWT 추가
+            responseBody.put("userId", memberLoginDto.getId());
+
+            return ResponseEntity.ok(responseBody);
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인 실패"));
         }
     }
 }
