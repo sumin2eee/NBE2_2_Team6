@@ -57,8 +57,9 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
+    public ResponseEntity<String> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
         // 로그인 post 요청
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(memberLoginDto.getId(), memberLoginDto.getPassword()));
@@ -79,15 +80,10 @@ public class MemberController {
             response.addCookie(refreshCookie);
             log.info("JWT token: " + jwtToken);
 
-            Map<String, String> responseBody = new HashMap<>();
-            responseBody.put("message", "Login successful");
-            responseBody.put("jwt", jwtToken);  // JWT 추가
-            responseBody.put("userId", memberLoginDto.getId());
-
-            return ResponseEntity.ok(responseBody);
+            return ResponseEntity.ok("Login successful");
         } catch (AuthenticationException e) {
             log.error("Authentication failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인 실패"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
     }
     @PostMapping("/refresh-token")
