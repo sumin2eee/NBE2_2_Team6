@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 조회</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .details {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>예약 조회</h1>
+
+<div class="message">
+    <p>예약 정보가 성공적으로 조회되었습니다!</p>
+</div>
+
+<div class="details" id="reservationDetails">
+    <!-- 예약 정보가 여기에 표시됩니다. -->
+</div>
+
+<div class="button-container">
+    <button class="back-button" onclick="window.location.href='rankingMovie.html'">확인</button>
+    <button class="cancel-button" onclick="cancelReservation()">예매 취소</button>
+</div>
+
+<script>
+    // URL에서 예약 ID 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const reservationId = urlParams.get('reservationId')
+
+    // 예약 정보 조회
+    fetch(`http://localhost:8080/reservation/${reservationId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('예약 정보를 가져오는 데 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const reservationDetails = `
+                <h2>예약 ID: ${data.reservationId}</h2>
+                <p>영화 제목: ${data.cinemaMovieName}</p>
+                <p>좌석 ID: ${data.seatId}</p>
+                <p>예약 날짜: ${new Date(data.reservationDate).toLocaleString()}</p>
+                <p>성인: ${data.adult}</p>
+                <p>청소년: ${data.youth}</p>
+                <p>어린이: ${data.child}</p>
+            `;
+            document.getElementById('reservationDetails').innerHTML = reservationDetails;
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById('reservationDetails').innerHTML = `<p>${error.message}</p>`;
+        });
+
+    // 예매 취소 함수
+    function cancelReservation() {
+        fetch(`http://localhost:8080/reservation/${reservationId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('예매 취소에 실패했습니다.');
+                }
+                // 성공적으로 삭제된 후 랭킹 페이지로 이동
+                window.location.href = 'http://localhost:8080/rankingMovie.html';
+            })
+            .catch(error => {
+                console.error(error);
+                alert('예매 취소 중 문제가 발생했습니다.');
+            });
+    }
+</script>
+
+</body>
+</html>

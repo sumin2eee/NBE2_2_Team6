@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상영 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .screening-info {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .reserve-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .reserve-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>상영 정보</h1>
+<div id="screeningContainer"></div>
+
+<script>
+    // URL 파라미터에서 movieId 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('movieId'); // 'movieId'로 수정
+    console.log(movieId); // movieId 확인
+
+    // 상영 정보 요청
+    fetch(`http://localhost:8080/cinemaMovie/${movieId}`) // 수정된 파라미터 사용
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 좋지 않습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayScreeningInfo(data);
+        })
+        .catch(error => console.error('상영 정보 가져오는 중 오류 발생:', error));
+
+    // 상영 정보 표시 함수
+    function displayScreeningInfo(data) {
+        const screeningContainer = document.getElementById('screeningContainer');
+        screeningContainer.innerHTML = ''; // 이전 데이터 초기화
+
+        // 데이터가 유효한지 확인
+        if (data && data.info) {
+            data.info.forEach(screening => {
+                const screeningInfo = document.createElement('div');
+                screeningInfo.classList.add('screening-info'); // 클래스 추가
+                screeningInfo.innerHTML = `
+                <h3>${screening.title}</h3>
+                <p>상영관: ${screening.cinemaName}</p>
+                <p>상영 날짜: ${screening.screenDate}</p>
+                <p>상영 시간: ${screening.screenTime}</p>
+                <button class="reserve-button" onclick="reserveSeats(${screening.cinemaId}, ${screening.cinemaMovieId})">좌석 선택</button>`;
+                screeningContainer.appendChild(screeningInfo);
+            });
+        } else {
+            screeningContainer.innerHTML = '<p>상영 정보가 없습니다.</p>';
+        }
+    }
+    function reserveSeats(cinemaId, cinemaMovieId) {
+        const requestBody = {
+            cinemaId: cinemaId,
+            cinemaMovieId: cinemaMovieId
+        };
+
+        fetch('http://localhost:8080/seat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('좌석 예약 중 오류가 발생했습니다.');
+                }
+                return response.json(); // 서버에서 응답을 JSON으로 변환
+            })
+            .then(data => {
+                // 서버 응답에 cinemaMovieId가 있으면 그 값을 사용
+                const redirectCinemaMovieId = data.cinemaMovieId || cinemaMovieId;
+                console.log('예약된 좌석:', data);
+                window.location.href = `seatSelection.html?cinemaMovieId=${redirectCinemaMovieId}`;
+            })
+            .catch(error => {
+                console.error('좌석 예약 중 오류 발생:', error);
+                alert(error.message); // 오류 메시지 출력
+            });
+    }
+</script>
+
+</body>
+</html>
