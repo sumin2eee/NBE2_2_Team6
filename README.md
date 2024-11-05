@@ -3,21 +3,22 @@
 
 <div align=center><h1>📚 STACKS</h1></div>
 <div align=center> 
-  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
-  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" style="transform: scale(1.5); margin: 5px;">
   <br>
-  <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
-  <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
-  <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+  <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/spring%20security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+  <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white" style="transform: scale(1.5); margin: 5px;">
   <br>
 
-  <!-- 원 안에 이미지와 텍스트 배치 -->
-  <div style="display: inline-block; border-radius: 50%; padding: 20px; border: 2px solid #ccc; text-align: center; width: 180px;">
+  <div style="display: inline-block; border-radius: 50%; padding: 20px; border: 2px solid #ccc; text-align: center; width: 250px;">
     <div style="font-weight: bold; margin-bottom: 10px;">협업툴</div>
-    <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
-    <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-    <img src="https://img.shields.io/badge/canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white">
+    <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+    <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white" style="transform: scale(1.5); margin: 5px;">
+    <img src="https://img.shields.io/badge/canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white" style="transform: scale(1.5); margin: 5px;">
   </div>
   <br>
 </div>
