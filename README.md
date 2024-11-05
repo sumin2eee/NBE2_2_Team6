@@ -2,7 +2,7 @@
 가상의 극장을 운영하는 영화관 서비스입니다.
 
 <div align=center><h1>📚 STACKS</h1></div>
-<div align=center> 
+<div align=left> 
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
 <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
   <br>
