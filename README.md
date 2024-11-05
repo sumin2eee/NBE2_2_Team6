@@ -17,7 +17,6 @@
     <div style="font-weight: bold; margin-bottom: 10px;">협업툴</div>
     <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white" style="width: 40px; height: 40px;">
     <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white" style="width: 40px; height: 40px;">
-    <img src="https://img.shields.io/badge/canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white" style="width: 40px; height: 40px;">
   </div>
   <br>
 </div>
