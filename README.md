@@ -123,8 +123,6 @@ sequenceDiagram
     end
 ```
 ## 가상계좌 결제
-## Virtual Account Payment Flow
-
 ```mermaid
 sequenceDiagram
     participant Buyer as 구매자
@@ -138,7 +136,7 @@ sequenceDiagram
     PaymentGateway->>Client: SuccessUrl 이동 
     par
         Client-->Server: 
-        Server->>PaymentGateway: 승인 API 요청 (실선)
+        Server->>PaymentGateway: 승인 API 요청 
     and
         PaymentGateway->>Server: 가상계좌 발급 결과 응답
         Server-->Client: 
