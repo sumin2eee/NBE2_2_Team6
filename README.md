@@ -133,7 +133,7 @@ sequenceDiagram
     participant PaymentGateway as 토스페이먼츠
 
     Buyer->>PaymentGateway: 가상계좌 발급 요청
-    PaymentGateway->>Client: SuccessUrl 이동
+    PaymentGateway-->>Client: SuccessUrl 이동 (점선)
     Client->>Server: 가상계좌 발급 요청
     Server->>PaymentGateway: 승인 API 요청
     PaymentGateway-->>Server: 가상계좌 발급 결과 응답
