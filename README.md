@@ -134,7 +134,7 @@ sequenceDiagram
     PaymentGateway->>Buyer: 결제창 띄우기
     Buyer->>PaymentGateway: 가상계좌 발급 요청
     PaymentGateway->>Client: SuccessUrl 이동 
-        alt
+        Client->>Client:
         Client-->Server: 
         Server->>PaymentGateway: 승인 API 요청 
    
