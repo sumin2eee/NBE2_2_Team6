@@ -134,13 +134,13 @@ sequenceDiagram
     PaymentGateway->>Buyer: 결제창 띄우기
     Buyer->>PaymentGateway: 가상계좌 발급 요청
     PaymentGateway->>Client: SuccessUrl 이동 
-    par
+   
         Client-->Server: 
         Server->>PaymentGateway: 승인 API 요청 
-    and
+   
         PaymentGateway->>Server: 가상계좌 발급 결과 응답
         Server-->Client: 
-    end 
+   
     Client->>Buyer: 가상계좌 정보 응답 
     Buyer->>PaymentGateway: 가상계좌 입금
     PaymentGateway->>Server: 입금 완료 통보
