@@ -123,9 +123,6 @@ sequenceDiagram
     end
 ```
 ## 가상계좌 결제
-
-## Virtual Account Payment Flow
-
 ## Virtual Account Payment Flow
 
 ```mermaid
@@ -145,6 +142,5 @@ sequenceDiagram
     PaymentGateway->>Server: 입금 완료 통보
     Server->>Client: 결제 결과 안내
     Client-->>Buyer: 결제 결과 안내
-
 ```
 
