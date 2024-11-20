@@ -122,4 +122,24 @@ sequenceDiagram
         WebApp ->> User: 리뷰 등록 완료 메시지 전달
     end
 ```
+## 가상계좌 결제
+
+```mermaid
+sequenceDiagram
+    participant Buyer
+    participant Client
+    participant Server
+    participant PaymentGateway
+
+    Buyer->>Client: 가상계좌 결제 요청
+    Client->>PaymentGateway: 결제창 호출
+    PaymentGateway-->>Client: 결제창 띄우기
+    Client->>Server: 가상계좌 발급 요청
+    Server->>PaymentGateway: 승인 API 요청
+    PaymentGateway-->>Server: 가상계좌 발급 결과 응답
+    Server-->>Client: 가상계좌 정보 응답
+    Buyer->>PaymentGateway: 가상계좌 입금
+    PaymentGateway->>Server: 입금 완료 통보
+    Server->>Client: 결제 결과 안내
+```
 
