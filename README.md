@@ -132,15 +132,18 @@ sequenceDiagram
     participant Server
     participant PaymentGateway as 토스페이먼츠
 
+    Client->>PaymentGateway: 결제창 호출
+    PaymentGateway->>Buyer: 결제창 띄우기
     Buyer->>PaymentGateway: 가상계좌 발급 요청
-    PaymentGateway-->Client: SuccessUrl 이동 (점선)
-    Client->>Server: 가상계좌 발급 요청
+    PaymentGateway->>Client: SuccessUrl 이동 
+    Client-->Server: 
     Server->>PaymentGateway: 승인 API 요청
-    PaymentGateway-->Server: 가상계좌 발급 결과 응답
-    Server-->Client: 가상계좌 정보 응답 (점선)
+    PaymentGateway->>Server: 가상계좌 발급 결과 응답
+    Server-->Client: 
+    Client->>Buyer: 가상계좌 정보 응답 
     Buyer->>PaymentGateway: 가상계좌 입금
     PaymentGateway->>Server: 입금 완료 통보
-    Server->>Client: 결제 결과 안내
+    Server-->Client: 
     Client->>Buyer: 결제 결과 안내
 ```
 
